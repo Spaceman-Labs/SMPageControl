@@ -10,4 +10,7 @@
 
 @interface SMViewController : UIViewController
 
+@property (nonatomic, readonly) IBOutlet UIScrollView *scrollview;
+@property (nonatomic, readonly) IBOutlet UIPageControl *pageControl;
+
 @end

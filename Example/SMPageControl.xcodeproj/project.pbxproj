@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D8496C01629EB59001ECE62 /* SMPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8496BF1629EB59001ECE62 /* SMPageControl.m */; };
+		3D8496C3162A0DDE001ECE62 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D8496C2162A0DDE001ECE62 /* icon.png */; };
 		3D9CDA921629EA9100B95512 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA911629EA9100B95512 /* UIKit.framework */; };
 		3D9CDA941629EA9100B95512 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA931629EA9100B95512 /* Foundation.framework */; };
 		3D9CDA961629EA9100B95512 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA951629EA9100B95512 /* CoreGraphics.framework */; };
@@ -22,6 +24,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D8496BE1629EB59001ECE62 /* SMPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMPageControl.h; path = ../../SMPageControl/SMPageControl.h; sourceTree = "<group>"; };
+		3D8496BF1629EB59001ECE62 /* SMPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMPageControl.m; path = ../../SMPageControl/SMPageControl.m; sourceTree = "<group>"; };
+		3D8496C2162A0DDE001ECE62 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		3D9CDA8D1629EA9100B95512 /* SMPageControl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMPageControl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D9CDA911629EA9100B95512 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3D9CDA931629EA9100B95512 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -92,6 +97,9 @@
 				3D9CDAAC1629EA9100B95512 /* SMViewController_iPhone.xib */,
 				3D9CDAAF1629EA9100B95512 /* SMViewController_iPad.xib */,
 				3D9CDA981629EA9100B95512 /* Supporting Files */,
+				3D8496BE1629EB59001ECE62 /* SMPageControl.h */,
+				3D8496BF1629EB59001ECE62 /* SMPageControl.m */,
+				3D8496C2162A0DDE001ECE62 /* icon.png */,
 			);
 			path = SMPageControl;
 			sourceTree = "<group>";
@@ -168,6 +176,7 @@
 				3D9CDAA81629EA9100B95512 /* Default-568h@2x.png in Resources */,
 				3D9CDAAE1629EA9100B95512 /* SMViewController_iPhone.xib in Resources */,
 				3D9CDAB11629EA9100B95512 /* SMViewController_iPad.xib in Resources */,
+				3D8496C3162A0DDE001ECE62 /* icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +190,7 @@
 				3D9CDA9E1629EA9100B95512 /* main.m in Sources */,
 				3D9CDAA21629EA9100B95512 /* SMAppDelegate.m in Sources */,
 				3D9CDAAB1629EA9100B95512 /* SMViewController.m in Sources */,
+				3D8496C01629EB59001ECE62 /* SMPageControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +317,7 @@
 				3D9CDAB61629EA9100B95512 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -17,7 +17,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	
+	CGSize size = self.view.bounds.size;
+	size.width *= 10;
+	self.scrollview.contentSize = size;
 }
 
 - (void)didReceiveMemoryWarning
