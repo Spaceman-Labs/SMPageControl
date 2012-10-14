@@ -26,8 +26,8 @@
 	self.spacePageControl5.backgroundColor = [UIColor clearColor];
 	self.spacePageControl6.backgroundColor = [UIColor clearColor];
 	
-	self.spacePageControl7.indicatorMargin = 25.0f;
-	self.spacePageControl7.indicatorDiameter = 20.0f;
+	self.spacePageControl7.indicatorMargin = 20.0f;
+	self.spacePageControl7.indicatorDiameter = 10.0f;
 	
 	self.spacePageControl2.alignment = SMPageControlAlignmentLeft;
 	self.spacePageControl3.alignment = SMPageControlAlignmentRight;
