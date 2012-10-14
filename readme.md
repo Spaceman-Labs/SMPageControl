@@ -2,14 +2,44 @@
 
 UIPageControl’s Fancy One-Upping Cousin.
 
-Designers _love_ to make beautifully custom page controls that fit in with all the wood, gradients, and inner shadows they've worked so hard perfecting - and who can blame them!? SMPageControl makes it dead simple to give them what they want. 
+Designers _love_ to make beautifully custom page controls that fit in with all the wood, gradients, and inner shadows they've worked so hard perfecting. 
 
-Even better, SMPageControl is a _drop in replacement_ for UIPageControl. It mirrors all the functions of UIPageControl, with no more changes than a class name.
+Who can blame them?! SMPageControl makes it dead simple to give them what they want. Even better, SMPageControl is a _drop in_ replacement for UIPageControl. It mirrors all the functions of UIPageControl, with literally no changes beyond the class name.
+
+## Moar Customization!
+
+SMPageControl has a variety of simple (yet powerful) areas of customization, and most all of them support the UIAppearance Proxy available to iOS 5.0 and newer.
+
+* Indicator size
+* Indicator spacing
+* Indicator Alignment
+* Images as indicators
+* Per indicator customization
+* Extensive support for UIAppearance
+
+![Screenshot](http://spacemanlabs.com/github/SMPageControl-1.png)
+
+## Example Usage
+
+``` objective-c
+SMPageControl *pageControl = [[SMPageControl alloc] init];
+pageControl.numberOfPages = 10;
+pageControl.pageIndicatorImage = [UIImage imageNamed:@"pageDot"];
+pageControl.currentPageIndicatorImage = [UIImage imageNamed:@"currentPageDot"];
+[pageControl sizeToFit];
+[self.view addSubview:pageControl];
+
+```
+
+## More Info
+
+The original blog post for this project can be found here.
+
 
 LICENSE
 -------
 
-Copyright (C) 2011 by Spaceman Labs
+Copyright (C) 2012 by Spaceman Labs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
