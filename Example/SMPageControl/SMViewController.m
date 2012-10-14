@@ -19,12 +19,13 @@
     [super viewDidLoad];
 	self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"retro_intro"]];
 		
-	self.spacePageControl1.backgroundColor = [UIColor clearColor];
-	self.spacePageControl2.backgroundColor = [UIColor clearColor];
-	self.spacePageControl3.backgroundColor = [UIColor clearColor];
-	self.spacePageControl4.backgroundColor = [UIColor clearColor];
-	self.spacePageControl5.backgroundColor = [UIColor clearColor];
-	self.spacePageControl6.backgroundColor = [UIColor clearColor];
+	self.spacePageControl1.numberOfPages = 10;
+	self.spacePageControl2.numberOfPages = 10;
+	self.spacePageControl3.numberOfPages = 10;
+	self.spacePageControl4.numberOfPages = 10;
+	self.spacePageControl5.numberOfPages = 10;
+	self.spacePageControl6.numberOfPages = 10;
+	self.spacePageControl7.numberOfPages = 10;
 	
 	self.spacePageControl7.indicatorMargin = 20.0f;
 	self.spacePageControl7.indicatorDiameter = 10.0f;
