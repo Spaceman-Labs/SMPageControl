@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 	SMPageControlVerticalAlignmentBottom
 };
 
-NS_CLASS_AVAILABLE_IOS(5_0) @interface SMPageControl : UIControl
+@interface SMPageControl : UIControl
 
 @property (nonatomic) NSInteger numberOfPages;
 @property (nonatomic) NSInteger currentPage;
