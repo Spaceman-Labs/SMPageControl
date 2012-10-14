@@ -219,7 +219,9 @@
 - (void)sizeToFit
 {
 	CGRect frame = self.frame;
-	frame.size = [self sizeForNumberOfPages:self.numberOfPages];
+	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+	size.height = MAX(size.height, 36.0f);
+	frame.size = size;
 	self.frame = frame;
 }
 
