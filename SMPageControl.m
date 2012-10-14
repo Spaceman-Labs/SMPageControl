@@ -31,7 +31,7 @@
 
 - (void)_initialize
 {
-	_numberOfPages = 10;
+	_numberOfPages = 0;
 	
 	self.backgroundColor = [UIColor clearColor];
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
@@ -225,6 +225,12 @@
 	self.frame = frame;
 }
 
+- (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
+{
+	NSInteger page = (int)floorf(scrollView.contentOffset.x / scrollView.frame.size.width);
+	self.currentPage = page;
+}
+
 #pragma mark -
 
 - (void)_updateMeasuredIndicatorSizes
@@ -303,7 +309,7 @@
 		return;
 	}
 	
-	_numberOfPages = numberOfPages;
+	_numberOfPages = MAX(0, numberOfPages);
 	[self setNeedsDisplay];
 }
 

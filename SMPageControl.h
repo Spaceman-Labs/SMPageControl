@@ -38,6 +38,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 @property (nonatomic) BOOL defersCurrentPageDisplay;	// if set, clicking to a new page won't update the currently displayed page until -updateCurrentPageDisplay is called. default is NO
 
 - (void)updateCurrentPageDisplay;						// update page display to match the currentPage. ignored if defersCurrentPageDisplay is NO. setting the page value directly will update immediately
+
 - (CGRect)rectForPageIndicator:(NSInteger)pageIndex;
 - (CGSize)sizeForNumberOfPages:(NSInteger)pageCount;
 
@@ -46,5 +47,6 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 - (UIImage *)imageForPage:(NSInteger)pageIndex;
 - (UIImage *)currentImageForPage:(NSInteger)pageIndex;
 
+- (void)updatePageNumberForScrollView:(UIScrollView *)scrollView;
 
 @end 
