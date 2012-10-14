@@ -164,7 +164,7 @@
 	return CGSizeMake(marginSpace + indicatorSpace, _measuredIndicatorHeight);
 }
 
-- (CGRect)rectForPage:(NSInteger)pageIndex
+- (CGRect)rectForPageIndicator:(NSInteger)pageIndex
 {
 	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
 		return CGRectZero;
@@ -262,9 +262,9 @@
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
 	if (point.x < self.bounds.size.width / 2.0f) {
-		[self setCurrentPage:self.currentPage - 1 sendEvent:YES];
+		[self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
 	} else {
-		[self setCurrentPage:self.currentPage + 1 sendEvent:YES];
+		[self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
 	}
 }
 
@@ -309,17 +309,17 @@
 
 - (void)setCurrentPage:(NSInteger)currentPage
 {
-	[self setCurrentPage:currentPage sendEvent:NO];
+	[self setCurrentPage:currentPage sendEvent:NO canDefer:NO];
 }
 
-- (void)setCurrentPage:(NSInteger)currentPage sendEvent:(BOOL)sendEvent
+- (void)setCurrentPage:(NSInteger)currentPage sendEvent:(BOOL)sendEvent canDefer:(BOOL)defer
 {
 	if (currentPage < 0 || currentPage >= _numberOfPages) {
 		return;
 	}
 	
 	_currentPage = currentPage;
-	if (NO == self.defersCurrentPageDisplay) {
+	if (NO == self.defersCurrentPageDisplay || NO == defer) {
 		_displayedPage = _currentPage;
 		[self setNeedsDisplay];
 	}
