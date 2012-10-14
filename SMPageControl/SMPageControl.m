@@ -220,6 +220,13 @@
 {
 	_measuredIndicatorWidth = _indicatorWidth;
 	_measuredIndicatorHeight = _indicatorWidth;
+	
+	// If we're only using images, ignore the _indicatorWidth
+	if (self.pageIndicatorImage && self.currentPageIndicatorImage) {
+		_measuredIndicatorWidth = 0;
+		_measuredIndicatorHeight = 0;
+	}
+	
 	if (self.pageIndicatorImage) {
 		CGSize imageSize = self.pageIndicatorImage.size;
 		_measuredIndicatorWidth = MAX(_indicatorWidth, imageSize.width);

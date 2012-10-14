@@ -13,6 +13,11 @@
 
 @property (nonatomic, readonly) IBOutlet UIScrollView *scrollview;
 @property (nonatomic, readonly) IBOutlet UIPageControl *pageControl;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl1;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl2;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl3;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl4;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl5;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl6;
 
 @end
