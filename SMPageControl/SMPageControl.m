@@ -33,6 +33,7 @@
 {
 	_numberOfPages = 10;
 	
+	self.backgroundColor = [UIColor clearColor];
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
 	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
 	_indicatorWidth = DEFAULT_INDICATOR_WIDTH;
@@ -50,6 +51,8 @@
     if (nil == self) {
 		return nil;
     }
+	
+	[self _initialize];
     return self;
 }
 
