@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SMPageControl.h"
 
 @interface SMViewController : UIViewController
 
 @property (nonatomic, readonly) IBOutlet UIScrollView *scrollview;
 @property (nonatomic, readonly) IBOutlet UIPageControl *pageControl;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl;
 
 @end

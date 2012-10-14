@@ -17,16 +17,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+		
+	[self.spacePageControl setPageIndicatorImage:[UIImage imageNamed:@"pageDot"]];
+	[self.spacePageControl setCurrentPageIndicatorImage:[UIImage imageNamed:@"currentPageDot"]];
+	self.spacePageControl.backgroundColor = [UIColor clearColor];
 	
-	CGSize size = self.view.bounds.size;
-	size.width *= 10;
-	self.scrollview.contentSize = size;
+	[self.pageControl addTarget:self action:@selector(pageControl:) forControlEvents:UIControlEventValueChanged];
+	[self.spacePageControl addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 }
 
-- (void)didReceiveMemoryWarning
+- (void)pageControl:(id)sender
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+	NSLog(@"Current Page (UIPageControl) : %i", self.pageControl.currentPage);
+}
+
+- (void)spacePageControl:(id)sender
+{
+	NSLog(@"Current Page (SMPageControl): %i", self.spacePageControl.currentPage);
 }
 
 @end

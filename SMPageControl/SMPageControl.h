@@ -20,25 +20,31 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 	SMPageControlVerticalAlignmentBottom
 };
 
-NS_CLASS_AVAILABLE_IOS(5_0) @interface SMPageControl : UIView
+NS_CLASS_AVAILABLE_IOS(5_0) @interface SMPageControl : UIControl
 
-@property (nonatomic, assign, readwrite) NSInteger numberOfPages;							// default is 0
-@property (nonatomic, assign, readwrite) NSInteger currentPage;								// default is 0. value pinned to 0..numberOfPages-1
-@property (nonatomic, assign, readwrite) CGFloat indicatorMargin;							// deafult is 10
-@property (nonatomic, assign, readwrite) CGFloat indicatorWidth;							// deafult is 6
-@property (nonatomic, assign, readwrite) SMPageControlAlignment alignment;					// deafult is Center
-@property (nonatomic, assign, readwrite) SMPageControlVerticalAlignment verticalAlignment;	// deafult is Middle
+@property (nonatomic) NSInteger numberOfPages;
+@property (nonatomic) NSInteger currentPage;
+@property (nonatomic) CGFloat indicatorMargin							UI_APPEARANCE_SELECTOR; // deafult is 10
+@property (nonatomic) CGFloat indicatorWidth							UI_APPEARANCE_SELECTOR; // deafult is 6
+@property (nonatomic) SMPageControlAlignment alignment					UI_APPEARANCE_SELECTOR; // deafult is Center
+@property (nonatomic) SMPageControlVerticalAlignment verticalAlignment	UI_APPEARANCE_SELECTOR;	// deafult is Middle
+
+@property (nonatomic, strong) UIImage *pageIndicatorImage				UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *pageIndicatorTintColor			UI_APPEARANCE_SELECTOR; // ignored if pageIndicatorImage is set
+@property (nonatomic, strong) UIImage *currentPageIndicatorImage		UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *currentPageIndicatorTintColor	UI_APPEARANCE_SELECTOR; // ignored if currentPageIndicatorImage is set
 
 @property (nonatomic) BOOL hidesForSinglePage;          // hide the the indicator if there is only one page. default is NO
-
 @property (nonatomic) BOOL defersCurrentPageDisplay;    // if set, clicking to a new page won't update the currently displayed page until -updateCurrentPageDisplay is called. default is NO
+
 - (void)updateCurrentPageDisplay;                      // update page display to match the currentPage. ignored if defersCurrentPageDisplay is NO. setting the page value directly will update immediately
 - (CGRect)rectForPage:(NSInteger)pageIndex;
 - (CGSize)sizeForNumberOfPages:(NSInteger)pageCount;   // returns minimum size required to display dots for given page count. can be used to size control if page count could change
 
-@property (nonatomic, retain) UIColor *pageIndicatorTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, retain) UIColor *currentPageIndicatorTintColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, retain) UIImage *pageIndicatorImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, retain) UIImage *currentPageIndicatorImage NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+- (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
+- (void)setCurrentImage:(UIImage *)image forPage:(NSInteger)pageIndex;
+- (UIImage *)imageForPage:(NSInteger)pageIndex;
+- (UIImage *)currentImageForPage:(NSInteger)pageIndex;
 
-@end
+
+@end 

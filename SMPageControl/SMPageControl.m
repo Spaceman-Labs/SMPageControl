@@ -22,13 +22,17 @@
 @implementation SMPageControl
 {
 @private
-    NSInteger       _displayedPage;
-	CGFloat			_measuredIndicatorWidth;
-	CGFloat			_measuredIndicatorHeight;
+    NSInteger			_displayedPage;
+	CGFloat				_measuredIndicatorWidth;
+	CGFloat				_measuredIndicatorHeight;
+	NSMutableDictionary	*_pageImages;
+	NSMutableDictionary	*_currentPageImages;
 }
 
 - (void)_initialize
 {
+	_numberOfPages = 10;
+	
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
 	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
 	_indicatorWidth = DEFAULT_INDICATOR_WIDTH;
@@ -36,7 +40,8 @@
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
 	
-	_numberOfPages = 10;
+	_pageImages = [NSMutableDictionary dictionary];
+	_currentPageImages = [NSMutableDictionary dictionary];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -57,8 +62,6 @@
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
-	[[UIColor redColor] set];
-	CGContextFillRect(context, CGRectMake(0, 0, rect.size.width, rect.size.height));
 	[self _renderPages:context rect:rect];
 }
 
@@ -68,25 +71,38 @@
 		return;
 	}
 	
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
 	CGFloat left = [self _leftOffset];
-	CGContextFillRect(context, CGRectMake(left, 0, size.width, size.height));
+//	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+//	CGContextFillRect(context, CGRectMake(left, 0, size.width, size.height));
 		
 	CGFloat xOffset = left;
 	CGFloat yOffset = [self _topOffset];
 	UIColor *fillColor = nil;
+	UIImage *image = nil;
+	
 	for (NSUInteger i = 0; i < _numberOfPages; i++) {
 		
 		if (i == _displayedPage) {
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
+			image = _currentPageImages[@(i)];
+			if (nil == image) {
+				image = _currentPageIndicatorImage;
+			}
 		} else {
 			fillColor = _pageIndicatorTintColor ? _pageIndicatorTintColor : [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+			image = _pageImages[@(i)];
+			if (nil == image) {
+				image = _pageIndicatorImage;
+			}
 		}
 		[fillColor set];
 
-		
-		
-		CGContextFillEllipseInRect(context, CGRectMake(xOffset, yOffset, _measuredIndicatorWidth, _measuredIndicatorHeight));
+		if (image) {
+			[image drawAtPoint:CGPointMake(xOffset, yOffset)];
+		} else {
+			CGContextFillEllipseInRect(context, CGRectMake(xOffset, yOffset, _measuredIndicatorWidth, _measuredIndicatorHeight));
+		}
+
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
 	
@@ -157,6 +173,47 @@
 	return rect;
 }
 
+- (void)_setImage:(UIImage *)image forPage:(NSInteger)pageIndex current:(BOOL)current
+{
+	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
+		return;
+	}
+	
+	NSMutableDictionary *dictionary = current ? _currentPageImages : _pageImages;
+	dictionary[@(pageIndex)] = image;
+}
+
+- (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
+{
+	[self _setImage:image forPage:pageIndex current:NO];
+}
+
+- (void)setCurrentImage:(UIImage *)image forPage:(NSInteger)pageIndex
+{
+	[self _setImage:image forPage:pageIndex current:YES];
+}
+
+- (UIImage *)_imageForPage:(NSInteger)pageIndex current:(BOOL)current
+{
+	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
+		return nil;
+	}
+	
+	NSDictionary *dictionary = current ? _currentPageImages : _pageImages;
+	return dictionary[@(pageIndex)];
+}
+
+- (UIImage *)imageForPage:(NSInteger)pageIndex
+{
+	return [self _imageForPage:pageIndex current:NO];
+}
+
+- (UIImage *)currentImageForPage:(NSInteger)pageIndex
+{
+	return [self _imageForPage:pageIndex current:YES];
+}
+
+
 #pragma mark -
 
 - (void)_updateMeasuredIndicatorSizes
@@ -187,13 +244,19 @@
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
 	if (point.x < self.bounds.size.width / 2.0f) {
-		self.currentPage -= 1;
+		[self setCurrentPage:self.currentPage - 1 sendEvent:YES];
 	} else {
-		self.currentPage += 1;
+		[self setCurrentPage:self.currentPage + 1 sendEvent:YES];
 	}
 }
 
 #pragma mark - Accessors
+
+- (void)setFrame:(CGRect)frame
+{
+	[super setFrame:frame];
+	[self setNeedsDisplay];
+}
 
 - (void)setIndicatorWidth:(CGFloat)indicatorWidth
 {
@@ -227,6 +290,11 @@
 
 - (void)setCurrentPage:(NSInteger)currentPage
 {
+	[self setCurrentPage:currentPage sendEvent:NO];
+}
+
+- (void)setCurrentPage:(NSInteger)currentPage sendEvent:(BOOL)sendEvent
+{
 	if (currentPage < 0 || currentPage >= _numberOfPages) {
 		return;
 	}
@@ -235,6 +303,10 @@
 	if (NO == self.defersCurrentPageDisplay) {
 		_displayedPage = _currentPage;
 		[self setNeedsDisplay];
+	}
+	
+	if (sendEvent) {
+		[self sendActionsForControlEvents:UIControlEventValueChanged];
 	}
 }
 
