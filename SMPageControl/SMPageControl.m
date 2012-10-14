@@ -216,6 +216,12 @@
 	return [self _imageForPage:pageIndex current:YES];
 }
 
+- (void)sizeToFit
+{
+	CGRect frame = self.frame;
+	frame.size = [self sizeForNumberOfPages:self.numberOfPages];
+	self.frame = frame;
+}
 
 #pragma mark -
 
