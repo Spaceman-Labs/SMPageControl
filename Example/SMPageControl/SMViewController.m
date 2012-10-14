@@ -26,6 +26,9 @@
 	self.spacePageControl5.backgroundColor = [UIColor clearColor];
 	self.spacePageControl6.backgroundColor = [UIColor clearColor];
 	
+	self.spacePageControl7.indicatorMargin = 25.0f;
+	self.spacePageControl7.indicatorDiameter = 20.0f;
+	
 	self.spacePageControl2.alignment = SMPageControlAlignmentLeft;
 	self.spacePageControl3.alignment = SMPageControlAlignmentRight;
 	
@@ -55,6 +58,7 @@
 	[self.spacePageControl4 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl5 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl6 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
+	[self.spacePageControl7 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)pageControl:(id)sender

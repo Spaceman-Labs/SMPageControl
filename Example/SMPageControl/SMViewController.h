@@ -19,5 +19,6 @@
 @property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl4;
 @property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl5;
 @property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl6;
+@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl7;
 
 @end

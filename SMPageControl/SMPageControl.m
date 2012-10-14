@@ -36,7 +36,7 @@
 	self.backgroundColor = [UIColor clearColor];
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
 	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
-	_indicatorWidth = DEFAULT_INDICATOR_WIDTH;
+	_indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
 	_indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
@@ -229,10 +229,10 @@
 
 - (void)_updateMeasuredIndicatorSizes
 {
-	_measuredIndicatorWidth = _indicatorWidth;
-	_measuredIndicatorHeight = _indicatorWidth;
+	_measuredIndicatorWidth = _indicatorDiameter;
+	_measuredIndicatorHeight = _indicatorDiameter;
 	
-	// If we're only using images, ignore the _indicatorWidth
+	// If we're only using images, ignore the _indicatorDiameter
 	if (self.pageIndicatorImage && self.currentPageIndicatorImage) {
 		_measuredIndicatorWidth = 0;
 		_measuredIndicatorHeight = 0;
@@ -240,14 +240,14 @@
 	
 	if (self.pageIndicatorImage) {
 		CGSize imageSize = self.pageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_indicatorWidth, imageSize.width);
-		_measuredIndicatorHeight = MAX(_indicatorWidth, imageSize.height);
+		_measuredIndicatorWidth = MAX(_indicatorDiameter, imageSize.width);
+		_measuredIndicatorHeight = MAX(_indicatorDiameter, imageSize.height);
 	}
 	
 	if (self.currentPageIndicatorImage) {
 		CGSize imageSize = self.currentPageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_indicatorWidth, imageSize.width);
-		_measuredIndicatorHeight = MAX(_indicatorWidth, imageSize.height);
+		_measuredIndicatorWidth = MAX(_indicatorDiameter, imageSize.width);
+		_measuredIndicatorHeight = MAX(_indicatorDiameter, imageSize.height);
 	}	
 }
 
@@ -276,13 +276,14 @@
 	[self setNeedsDisplay];
 }
 
-- (void)setIndicatorWidth:(CGFloat)indicatorWidth
+- (void)setIndicatorDiameter:(CGFloat)indicatorDiameter
 {
-	if (indicatorWidth == _indicatorWidth) {
+	if (indicatorDiameter == _indicatorDiameter) {
 		return;
 	}
 	
-	_indicatorWidth = indicatorWidth;
+	_indicatorDiameter = indicatorDiameter;
+	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
 }
 

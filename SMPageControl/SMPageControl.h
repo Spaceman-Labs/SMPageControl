@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 @property (nonatomic) NSInteger numberOfPages;
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) CGFloat indicatorMargin							UI_APPEARANCE_SELECTOR; // deafult is 10
-@property (nonatomic) CGFloat indicatorWidth							UI_APPEARANCE_SELECTOR; // deafult is 6
+@property (nonatomic) CGFloat indicatorDiameter							UI_APPEARANCE_SELECTOR; // deafult is 6
 @property (nonatomic) SMPageControlAlignment alignment					UI_APPEARANCE_SELECTOR; // deafult is Center
 @property (nonatomic) SMPageControlVerticalAlignment verticalAlignment	UI_APPEARANCE_SELECTOR;	// deafult is Middle
 
