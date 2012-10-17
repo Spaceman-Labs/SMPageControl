@@ -15,8 +15,19 @@
 
 #define DEFAULT_INDICATOR_WIDTH 6.0f
 #define DEFAULT_INDICATOR_MARGIN 10.0f
+#define MIN_HEIGHT 36.0f
+
+typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
+	SMPageControlImageTypeNormal = 1,
+	SMPageControlImageTypeCurrent,
+	SMPageControlImageTypeMask
+};
 
 @interface SMPageControl ()
+@property (nonatomic, readonly) NSMutableDictionary *pageImages;
+@property (nonatomic, readonly) NSMutableDictionary *currentPageImages;
+@property (nonatomic, readonly) NSMutableDictionary *pageImageMasks;
+@property (nonatomic, readonly) NSMutableDictionary *cgImageMasks;
 @end
 
 @implementation SMPageControl
@@ -25,9 +36,12 @@
     NSInteger			_displayedPage;
 	CGFloat				_measuredIndicatorWidth;
 	CGFloat				_measuredIndicatorHeight;
-	NSMutableDictionary	*_pageImages;
-	NSMutableDictionary	*_currentPageImages;
 }
+
+@synthesize pageImages = _pageImages;
+@synthesize currentPageImages = _currentPageImages;
+@synthesize pageImageMasks = _pageImageMasks;
+@synthesize cgImageMasks = _cgImageMasks;
 
 - (void)_initialize
 {
@@ -40,9 +54,6 @@
 	_indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
-	
-	_pageImages = [NSMutableDictionary dictionary];
-	_currentPageImages = [NSMutableDictionary dictionary];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -73,44 +84,57 @@
 	if (_numberOfPages < 2 && _hidesForSinglePage) {
 		return;
 	}
-	
+		
 	CGFloat left = [self _leftOffset];
-//	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-//	CGContextFillRect(context, CGRectMake(left, 0, size.width, size.height));
 		
 	CGFloat xOffset = left;
-	CGFloat yOffset = [self _topOffset];
+	CGFloat yOffset = 0.0f;
 	UIColor *fillColor = nil;
 	UIImage *image = nil;
+	CGImageRef maskingImage = nil;
 	
 	for (NSUInteger i = 0; i < _numberOfPages; i++) {
+		NSNumber *indexNumber = @(i);
+		
 		
 		if (i == _displayedPage) {
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
-			image = _currentPageImages[@(i)];
+			image = _currentPageImages[indexNumber];
 			if (nil == image) {
 				image = _currentPageIndicatorImage;
 			}
 		} else {
 			fillColor = _pageIndicatorTintColor ? _pageIndicatorTintColor : [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
-			image = _pageImages[@(i)];
+			image = _pageImages[indexNumber];
 			if (nil == image) {
 				image = _pageIndicatorImage;
 			}
 		}
-		[fillColor set];
-
-		if (image) {
-			[image drawAtPoint:CGPointMake(xOffset, yOffset)];
-		} else {
-			CGContextFillEllipseInRect(context, CGRectMake(xOffset, yOffset, _measuredIndicatorWidth, _measuredIndicatorHeight));
+		
+		// If no finished images have been set, try a masking image
+		if (nil == image) {
+			maskingImage = (__bridge CGImageRef)_cgImageMasks[indexNumber];
 		}
-
+		
+		[fillColor set];
+		
+		if (image) {
+			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
+			[image drawAtPoint:CGPointMake(xOffset, yOffset)];
+		} else if (maskingImage) {
+			UIImage *originalImage = _pageImageMasks[indexNumber];
+			yOffset = [self _topOffsetForHeight:originalImage.size.height rect:rect];
+			CGRect imageRect = CGRectMake(xOffset, yOffset, originalImage.size.width, originalImage.size.height);
+			CGContextDrawImage(context, imageRect, maskingImage);
+		} else {
+			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
+			CGContextFillEllipseInRect(context, CGRectMake(xOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
+		}
+		
+		maskingImage = NULL;
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
 	
-//	[[UIColor greenColor] set];
-//	CGContextFillRect(context, CGRectMake(left, 0.0f, [self sizeForNumberOfPages:_numberOfPages].width, 10.0f));
 }
 
 - (CGFloat)_leftOffset
@@ -132,22 +156,20 @@
 	return left;
 }
 
-- (CGFloat)_topOffset
+- (CGFloat)_topOffsetForHeight:(CGFloat)height rect:(CGRect)rect
 {
-	CGRect rect = self.bounds;
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
 	CGFloat top = 0.0f;
 	switch (_verticalAlignment) {
 		case SMPageControlVerticalAlignmentMiddle:
-			top = CGRectGetMidY(rect) - (_measuredIndicatorHeight / 2.0f);
+			top = CGRectGetMidY(rect) - (height / 2.0f);
 			break;
 		case SMPageControlVerticalAlignmentBottom:
-			top = CGRectGetMaxY(rect) - size.height;
+			top = CGRectGetMaxY(rect) - height;
 			break;
 		default:
 			break;
 	}
-
+	
 	return top;
 }
 
@@ -161,7 +183,8 @@
 {
 	CGFloat marginSpace = MAX(0, pageCount - 1) * _indicatorMargin;
 	CGFloat indicatorSpace = pageCount * _measuredIndicatorWidth;
-	return CGSizeMake(marginSpace + indicatorSpace, _measuredIndicatorHeight);
+	CGSize size = CGSizeMake(marginSpace + indicatorSpace, _measuredIndicatorHeight);
+	return size;
 }
 
 - (CGRect)rectForPageIndicator:(NSInteger)pageIndex
@@ -176,51 +199,115 @@
 	return rect;
 }
 
-- (void)_setImage:(UIImage *)image forPage:(NSInteger)pageIndex current:(BOOL)current
+- (void)_setImage:(UIImage *)image forPage:(NSInteger)pageIndex type:(SMPageControlImageType)type
 {
 	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
 		return;
 	}
 	
-	NSMutableDictionary *dictionary = current ? _currentPageImages : _pageImages;
+	NSMutableDictionary *dictionary = nil;
+	switch (type) {
+		case SMPageControlImageTypeCurrent:
+			dictionary = self.currentPageImages;
+			break;
+		case SMPageControlImageTypeNormal:
+			dictionary = self.pageImages;
+			break;
+		case SMPageControlImageTypeMask:
+			dictionary = self.pageImageMasks;
+			break;
+		default:
+			break;
+	}
+
 	dictionary[@(pageIndex)] = image;
 }
 
 - (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
 {
-	[self _setImage:image forPage:pageIndex current:NO];
+	[self _setImage:image forPage:pageIndex type:SMPageControlImageTypeNormal];
+	[self _updateMeasuredIndicatorSizes];
 }
 
 - (void)setCurrentImage:(UIImage *)image forPage:(NSInteger)pageIndex
 {
-	[self _setImage:image forPage:pageIndex current:YES];
+	[self _setImage:image forPage:pageIndex type:SMPageControlImageTypeCurrent];;
+	[self _updateMeasuredIndicatorSizes];
 }
 
-- (UIImage *)_imageForPage:(NSInteger)pageIndex current:(BOOL)current
+- (void)setImageMask:(UIImage *)image forPage:(NSInteger)pageIndex
+{
+	[self _setImage:image forPage:pageIndex type:SMPageControlImageTypeMask];
+	
+	if (nil == image) {
+		[self.cgImageMasks removeObjectForKey:@(pageIndex)];
+		return;
+	}
+	
+	[self _updateMeasuredIndicatorSizes];
+
+	size_t pixelsWide = image.size.width * image.scale;
+	size_t pixelsHigh = image.size.height * image.scale;
+	int bitmapBytesPerRow = (pixelsWide * 1);
+	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, kCGImageAlphaOnly);
+	CGContextTranslateCTM(context, 0.f, pixelsHigh);
+	CGContextScaleCTM(context, 1.0f, -1.0f);
+
+	CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.CGImage);
+	CGImageRef maskImage = CGBitmapContextCreateImage(context);
+	CGContextRelease(context);
+
+	if (maskImage) {
+		self.cgImageMasks[@(pageIndex)] = (__bridge id)maskImage;
+	}
+	
+	CGImageRelease(maskImage);
+}
+
+- (id)_imageForPage:(NSInteger)pageIndex type:(SMPageControlImageType)type
 {
 	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
 		return nil;
 	}
 	
-	NSDictionary *dictionary = current ? _currentPageImages : _pageImages;
+	NSDictionary *dictionary = nil;
+	switch (type) {
+		case SMPageControlImageTypeCurrent:
+			dictionary = _currentPageImages;
+			break;
+		case SMPageControlImageTypeNormal:
+			dictionary = _pageImages;
+			break;
+		case SMPageControlImageTypeMask:
+			dictionary = _pageImageMasks;
+			break;
+		default:
+			break;
+	}
+	
 	return dictionary[@(pageIndex)];
 }
 
 - (UIImage *)imageForPage:(NSInteger)pageIndex
 {
-	return [self _imageForPage:pageIndex current:NO];
+	return [self _imageForPage:pageIndex type:SMPageControlImageTypeNormal];
 }
 
 - (UIImage *)currentImageForPage:(NSInteger)pageIndex
 {
-	return [self _imageForPage:pageIndex current:YES];
+	return [self _imageForPage:pageIndex type:SMPageControlImageTypeCurrent];
+}
+
+- (UIImage *)imageMaskForPage:(NSInteger)pageIndex
+{
+	return [self _imageForPage:pageIndex type:SMPageControlImageTypeMask];
 }
 
 - (void)sizeToFit
 {
 	CGRect frame = self.frame;
 	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	size.height = MAX(size.height, 36.0f);
+	size.height = MAX(size.height, MIN_HEIGHT);
 	frame.size = size;
 	self.frame = frame;
 }
@@ -358,6 +445,46 @@
 	_pageIndicatorImage = pageIndicatorImage;
 	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
+}
+
+- (NSMutableDictionary *)pageImages
+{
+	if (nil != _pageImages) {
+		return _pageImages;
+	}
+	
+	_pageImages = [[NSMutableDictionary alloc] init];
+	return _pageImages;
+}
+
+- (NSMutableDictionary *)currentPageImages
+{
+	if (nil != _currentPageImages) {
+		return _currentPageImages;
+	}
+	
+	_currentPageImages = [[NSMutableDictionary alloc] init];
+	return _currentPageImages;
+}
+
+- (NSMutableDictionary *)pageImageMasks
+{
+	if (nil != _pageImageMasks) {
+		return _pageImageMasks;
+	}
+	
+	_pageImageMasks = [[NSMutableDictionary alloc] init];
+	return _pageImageMasks;
+}
+
+- (NSMutableDictionary *)cgImageMasks
+{
+	if (nil != _cgImageMasks) {
+		return _cgImageMasks;
+	}
+	
+	_cgImageMasks = [[NSMutableDictionary alloc] init];
+	return _cgImageMasks;
 }
 
 @end
