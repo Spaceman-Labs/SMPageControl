@@ -18,7 +18,7 @@ SMPageControl has a variety of simple (yet powerful) areas of customization, and
 * Per-Indicator customization
 * Extensive Support for UIAppearance
 
-![Screenshot](http://spacemanlabs.com/github/SMPageControl-1.png)
+![Screenshot](http://spacemanlabs.com/github/SMPageControl-2.png)
 
 ## Example Usage
 
