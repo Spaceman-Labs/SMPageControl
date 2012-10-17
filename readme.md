@@ -10,12 +10,13 @@ Who can blame them?! SMPageControl makes it dead simple to give them what they w
 
 SMPageControl has a variety of simple (yet powerful) areas of customization, and most all of them support the UIAppearance Proxy available to iOS 5.0 and newer.
 
-* Indicator size
-* Indicator spacing
+* Indicator Size
+* Indicator Spacing
 * Indicator Alignment
-* Images as indicators
-* Per indicator customization
-* Extensive support for UIAppearance
+* Images as Indicators
+* Image Masks as Indicators
+* Per-Indicator customization
+* Extensive Support for UIAppearance
 
 ![Screenshot](http://spacemanlabs.com/github/SMPageControl-1.png)
 
@@ -33,7 +34,7 @@ pageControl.currentPageIndicatorImage = [UIImage imageNamed:@"currentPageDot"];
 
 ## More Info
 
-The original blog post for this project can be found here.
+The original blog post for this project can be found [here](http://www.ultrajoke.net/2012/10/smpagecontrol/).
 
 
 LICENSE
