@@ -27,31 +27,27 @@
 	self.spacePageControl6.numberOfPages = 10;
 	self.spacePageControl7.numberOfPages = 10;
 	
-	self.spacePageControl7.indicatorMargin = 20.0f;
-	self.spacePageControl7.indicatorDiameter = 10.0f;
+	self.spacePageControl2.indicatorMargin = 20.0f;
+	self.spacePageControl2.indicatorDiameter = 10.0f;
 	
-	self.spacePageControl2.alignment = SMPageControlAlignmentLeft;
-	self.spacePageControl3.alignment = SMPageControlAlignmentRight;
+	self.spacePageControl3.alignment = SMPageControlAlignmentLeft;
+	self.spacePageControl4.alignment = SMPageControlAlignmentRight;
 	
-	[self.spacePageControl4 setPageIndicatorImage:[UIImage imageNamed:@"pageDot"]];
-	[self.spacePageControl4 setCurrentPageIndicatorImage:[UIImage imageNamed:@"currentPageDot"]];
-
 	[self.spacePageControl5 setPageIndicatorImage:[UIImage imageNamed:@"pageDot"]];
 	[self.spacePageControl5 setCurrentPageIndicatorImage:[UIImage imageNamed:@"currentPageDot"]];
-	[self.spacePageControl5 setImage:[UIImage imageNamed:@"searchDot"] forPage:0];
-	[self.spacePageControl5 setCurrentImage:[UIImage imageNamed:@"currentSearchDot"] forPage:0];
-	[self.spacePageControl5 setImage:[UIImage imageNamed:@"appleDot"] forPage:1];
-	[self.spacePageControl5 setCurrentImage:[UIImage imageNamed:@"currentAppleDot"] forPage:1];
-	self.spacePageControl5.currentPage = 3;
-	
+
 	[self.spacePageControl6 setPageIndicatorImage:[UIImage imageNamed:@"pageDot"]];
 	[self.spacePageControl6 setCurrentPageIndicatorImage:[UIImage imageNamed:@"currentPageDot"]];
 	[self.spacePageControl6 setImage:[UIImage imageNamed:@"searchDot"] forPage:0];
 	[self.spacePageControl6 setCurrentImage:[UIImage imageNamed:@"currentSearchDot"] forPage:0];
 	[self.spacePageControl6 setImage:[UIImage imageNamed:@"appleDot"] forPage:1];
 	[self.spacePageControl6 setCurrentImage:[UIImage imageNamed:@"currentAppleDot"] forPage:1];
-	self.spacePageControl6.currentPage = 4;
+	self.spacePageControl6.currentPage = 3;
 	
+	[self.spacePageControl7 setPageIndicatorTintColor:[[UIColor darkGrayColor] colorWithAlphaComponent:0.7f]];
+	[self.spacePageControl7 setImageMask:[UIImage imageNamed:@"appleMask"] forPage:1];
+	[self.spacePageControl7 setImageMask:[UIImage imageNamed:@"searchMask"] forPage:0];
+		
 	[self.pageControl addTarget:self action:@selector(pageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl1 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl2 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
