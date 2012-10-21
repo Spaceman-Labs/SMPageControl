@@ -219,13 +219,17 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		default:
 			break;
 	}
-
-	dictionary[@(pageIndex)] = image;
+    
+    if (image) {
+        dictionary[@(pageIndex)] = image;
+    } else {
+        [dictionary removeObjectForKey:@(pageIndex)];
+    }
 }
 
 - (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
 {
-	[self _setImage:image forPage:pageIndex type:SMPageControlImageTypeNormal];
+    [self _setImage:image forPage:pageIndex type:SMPageControlImageTypeNormal];
 	[self _updateMeasuredIndicatorSizes];
 }
 
