@@ -51,5 +51,6 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 - (UIImage *)imageMaskForPage:(NSInteger)pageIndex;
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView;
+- (void)setScrollViewContentOffsetForCurrentPage:(UIScrollView *)scrollView animated:(BOOL)animated;
 
 @end 

@@ -318,8 +318,15 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
 {
-	NSInteger page = (int)floorf(scrollView.contentOffset.x / scrollView.frame.size.width);
+	NSInteger page = (int)floorf(scrollView.contentOffset.x / scrollView.bounds.size.width);
 	self.currentPage = page;
+}
+
+- (void)setScrollViewContentOffsetForCurrentPage:(UIScrollView *)scrollView animated:(BOOL)animated
+{
+	CGPoint offset = scrollView.contentOffset;
+	offset.x = scrollView.bounds.size.width * self.currentPage;
+	[scrollView setContentOffset:offset animated:animated];
 }
 
 #pragma mark -
