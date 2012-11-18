@@ -96,7 +96,6 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	for (NSUInteger i = 0; i < _numberOfPages; i++) {
 		NSNumber *indexNumber = @(i);
 		
-		
 		if (i == _displayedPage) {
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
 			image = _currentPageImages[indexNumber];
@@ -120,11 +119,13 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
-			[image drawAtPoint:CGPointMake(xOffset, yOffset)];
+			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
+			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
 		} else if (maskingImage) {
 			UIImage *originalImage = _pageImageMasks[indexNumber];
 			yOffset = [self _topOffsetForHeight:originalImage.size.height rect:rect];
-			CGRect imageRect = CGRectMake(xOffset, yOffset, originalImage.size.width, originalImage.size.height);
+			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
+			CGRect imageRect = CGRectMake(centeredXOffset, yOffset, originalImage.size.width, originalImage.size.height);
 			CGContextDrawImage(context, imageRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
@@ -344,14 +345,14 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	
 	if (self.pageIndicatorImage) {
 		CGSize imageSize = self.pageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_indicatorDiameter, imageSize.width);
-		_measuredIndicatorHeight = MAX(_indicatorDiameter, imageSize.height);
+		_measuredIndicatorWidth = MAX(_measuredIndicatorWidth, imageSize.width);
+		_measuredIndicatorHeight = MAX(_measuredIndicatorHeight, imageSize.height);
 	}
 	
 	if (self.currentPageIndicatorImage) {
 		CGSize imageSize = self.currentPageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_indicatorDiameter, imageSize.width);
-		_measuredIndicatorHeight = MAX(_indicatorDiameter, imageSize.height);
+		_measuredIndicatorWidth = MAX(_measuredIndicatorWidth, imageSize.width);
+		_measuredIndicatorHeight = MAX(_measuredIndicatorHeight, imageSize.height);
 	}	
 }
 
