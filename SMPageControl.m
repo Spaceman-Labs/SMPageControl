@@ -264,9 +264,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 	if (maskImage) {
 		self.cgImageMasks[@(pageIndex)] = (__bridge id)maskImage;
+		CGImageRelease(maskImage);
 	}
-	
-	CGImageRelease(maskImage);
 }
 
 - (id)_imageForPage:(NSInteger)pageIndex type:(SMPageControlImageType)type
