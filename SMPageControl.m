@@ -129,7 +129,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 			CGContextDrawImage(context, imageRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
-			CGContextFillEllipseInRect(context, CGRectMake(xOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
+			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
+			CGContextFillEllipseInRect(context, CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
 		}
 		
 		maskingImage = NULL;
