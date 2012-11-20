@@ -26,6 +26,7 @@
 	self.spacePageControl5.numberOfPages = 10;
 	self.spacePageControl6.numberOfPages = 10;
 	self.spacePageControl7.numberOfPages = 10;
+	self.spacePageControl8.numberOfPages = 10;
 	
 	self.spacePageControl2.indicatorMargin = 20.0f;
 	self.spacePageControl2.indicatorDiameter = 10.0f;
@@ -44,9 +45,14 @@
 	[self.spacePageControl6 setCurrentImage:[UIImage imageNamed:@"currentAppleDot"] forPage:1];
 	self.spacePageControl6.currentPage = 3;
 	
-	[self.spacePageControl7 setPageIndicatorTintColor:[[UIColor darkGrayColor] colorWithAlphaComponent:0.7f]];
+	self.spacePageControl7.pageIndicatorTintColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7f];
+	self.spacePageControl7.currentPageIndicatorTintColor = [UIColor yellowColor];
 	[self.spacePageControl7 setImageMask:[UIImage imageNamed:@"appleMask"] forPage:1];
 	[self.spacePageControl7 setImageMask:[UIImage imageNamed:@"searchMask"] forPage:0];
+
+	self.spacePageControl8.pageIndicatorTintColor = [[UIColor redColor] colorWithAlphaComponent:0.2f];
+	self.spacePageControl8.currentPageIndicatorTintColor = [UIColor redColor];
+	self.spacePageControl8.pageIndicatorMaskImage = [UIImage imageNamed:@"appleMask"];
 		
 	[self.pageControl addTarget:self action:@selector(pageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl1 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
@@ -56,6 +62,7 @@
 	[self.spacePageControl5 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl6 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 	[self.spacePageControl7 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
+	[self.spacePageControl8 addTarget:self action:@selector(spacePageControl:) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void)pageControl:(id)sender
