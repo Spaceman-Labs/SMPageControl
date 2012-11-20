@@ -36,6 +36,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
     NSInteger			_displayedPage;
 	CGFloat				_measuredIndicatorWidth;
 	CGFloat				_measuredIndicatorHeight;
+	CGImageRef			_pageImageMask;
 }
 
 @synthesize pageImages = _pageImages;
@@ -73,6 +74,13 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	[self _initialize];
 }
 
+- (void)dealloc
+{
+	if (_pageImageMask) {
+		CGImageRelease(_pageImageMask);
+	}	
+}
+
 - (void)drawRect:(CGRect)rect
 {
 	CGContextRef context = UIGraphicsGetCurrentContext();
@@ -92,6 +100,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	UIColor *fillColor = nil;
 	UIImage *image = nil;
 	CGImageRef maskingImage = nil;
+	CGSize maskSize = CGSizeZero;
 	
 	for (NSUInteger i = 0; i < _numberOfPages; i++) {
 		NSNumber *indexNumber = @(i);
@@ -113,8 +122,16 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		// If no finished images have been set, try a masking image
 		if (nil == image) {
 			maskingImage = (__bridge CGImageRef)_cgImageMasks[indexNumber];
+			UIImage *originalImage = _pageImageMasks[indexNumber];
+			maskSize = originalImage.size;
+
+			// If no per page mask is set, try for a global page mask!
+			if (nil == maskingImage) {
+				maskingImage = _pageImageMask;
+				maskSize = _pageIndicatorMaskImage.size;
+			}
 		}
-		
+				
 		[fillColor set];
 		
 		if (image) {
@@ -122,14 +139,13 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
 			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
 		} else if (maskingImage) {
-			UIImage *originalImage = _pageImageMasks[indexNumber];
-			yOffset = [self _topOffsetForHeight:originalImage.size.height rect:rect];
-			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
-			CGRect imageRect = CGRectMake(centeredXOffset, yOffset, originalImage.size.width, originalImage.size.height);
+			yOffset = [self _topOffsetForHeight:maskSize.height rect:rect];
+			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - maskSize.width) / 2.0f);
+			CGRect imageRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
 			CGContextDrawImage(context, imageRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
-			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
+			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
 			CGContextFillEllipseInRect(context, CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
 		}
 		
@@ -250,22 +266,13 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		return;
 	}
 	
-	[self _updateMeasuredIndicatorSizes];
-
-	size_t pixelsWide = image.size.width * image.scale;
-	size_t pixelsHigh = image.size.height * image.scale;
-	int bitmapBytesPerRow = (pixelsWide * 1);
-	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, kCGImageAlphaOnly);
-	CGContextTranslateCTM(context, 0.f, pixelsHigh);
-	CGContextScaleCTM(context, 1.0f, -1.0f);
-
-	CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.CGImage);
-	CGImageRef maskImage = CGBitmapContextCreateImage(context);
-	CGContextRelease(context);
+	CGImageRef maskImage = [self createMaskForImage:image];
 
 	if (maskImage) {
 		self.cgImageMasks[@(pageIndex)] = (__bridge id)maskImage;
 		CGImageRelease(maskImage);
+		[self _updateMeasuredIndicatorSizeWithSize:image.size];
+		[self setNeedsDisplay];
 	}
 }
 
@@ -332,35 +339,58 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 #pragma mark -
 
+- (CGImageRef)createMaskForImage:(UIImage *)image CF_RETURNS_RETAINED
+{
+	size_t pixelsWide = image.size.width * image.scale;
+	size_t pixelsHigh = image.size.height * image.scale;
+	int bitmapBytesPerRow = (pixelsWide * 1);
+	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, kCGImageAlphaOnly);
+	CGContextTranslateCTM(context, 0.f, pixelsHigh);
+	CGContextScaleCTM(context, 1.0f, -1.0f);
+	
+	CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.CGImage);
+	CGImageRef maskImage = CGBitmapContextCreateImage(context);
+	CGContextRelease(context);
+
+	return maskImage;
+}
+
+- (void)_updateMeasuredIndicatorSizeWithSize:(CGSize)size
+{
+	_measuredIndicatorWidth = MAX(_measuredIndicatorWidth, size.width);
+	_measuredIndicatorHeight = MAX(_measuredIndicatorHeight, size.height);
+}
+
 - (void)_updateMeasuredIndicatorSizes
 {
 	_measuredIndicatorWidth = _indicatorDiameter;
 	_measuredIndicatorHeight = _indicatorDiameter;
 	
 	// If we're only using images, ignore the _indicatorDiameter
-	if (self.pageIndicatorImage && self.currentPageIndicatorImage) {
+	if ( (self.pageIndicatorImage || self.pageIndicatorMaskImage) && self.currentPageIndicatorImage )
+	{
 		_measuredIndicatorWidth = 0;
 		_measuredIndicatorHeight = 0;
 	}
 	
 	if (self.pageIndicatorImage) {
-		CGSize imageSize = self.pageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_measuredIndicatorWidth, imageSize.width);
-		_measuredIndicatorHeight = MAX(_measuredIndicatorHeight, imageSize.height);
+		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorImage.size];
 	}
 	
 	if (self.currentPageIndicatorImage) {
-		CGSize imageSize = self.currentPageIndicatorImage.size;
-		_measuredIndicatorWidth = MAX(_measuredIndicatorWidth, imageSize.width);
-		_measuredIndicatorHeight = MAX(_measuredIndicatorHeight, imageSize.height);
-	}	
+		[self _updateMeasuredIndicatorSizeWithSize:self.currentPageIndicatorImage.size];
+	}
+	
+	if (self.pageIndicatorMaskImage) {
+		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
+	}
 }
 
 
 #pragma mark - Tap Gesture
 
 // We're using touchesEnded: because we want to mimick UIPageControl as close as possible
-// As of iOS 6, UIPageControl still does not use a tap gesture recognizer. This means that actions like
+// As of iOS 6, UIPageControl still (as far as we know) does not use a tap gesture recognizer. This means that actions like
 // touching down, sliding around, and releasing, still results in the page incrementing or decrementing.
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
@@ -455,6 +485,24 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	}
 	
 	_pageIndicatorImage = pageIndicatorImage;
+	[self _updateMeasuredIndicatorSizes];
+	[self setNeedsDisplay];
+}
+
+- (void)setPageIndicatorMaskImage:(UIImage *)pageIndicatorMaskImage
+{
+	if ([pageIndicatorMaskImage isEqual:_pageIndicatorMaskImage]) {
+		return;
+	}
+	
+	_pageIndicatorMaskImage = pageIndicatorMaskImage;
+	
+	if (_pageImageMask) {
+		CGImageRelease(_pageImageMask);
+	}
+	
+	_pageImageMask = [self createMaskForImage:_pageIndicatorMaskImage];
+	
 	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
 }
