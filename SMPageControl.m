@@ -55,6 +55,9 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	_indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
+	
+	self.isAccessibilityElement = YES;
+	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -442,6 +445,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	}
 	
 	_numberOfPages = MAX(0, numberOfPages);
+	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
 }
 
@@ -457,6 +461,9 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	}
 	
 	_currentPage = currentPage;
+	
+	[self updateAccessibilityValue];
+	
 	if (NO == self.defersCurrentPageDisplay || NO == defer) {
 		_displayedPage = _currentPage;
 		[self setNeedsDisplay];
@@ -545,6 +552,23 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	
 	_cgImageMasks = [[NSMutableDictionary alloc] init];
 	return _cgImageMasks;
+}
+
+#pragma mark - Accessibility
+
+- (void)updateAccessibilityValue
+{
+	self.accessibilityValue = [NSString stringWithFormat:@"Page %i of %i", self.currentPage + 1, self.numberOfPages];
+}
+
+- (void)accessibilityIncrement
+{
+	self.currentPage = self.currentPage - 1;
+}
+
+- (void)accessibilityDecrement
+{
+	self.currentPage = self.currentPage + 1;
 }
 
 @end
