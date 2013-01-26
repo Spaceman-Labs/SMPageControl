@@ -24,10 +24,16 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 };
 
 @interface SMPageControl ()
+@property (nonatomic, readonly) NSMutableDictionary *pageNames;
 @property (nonatomic, readonly) NSMutableDictionary *pageImages;
 @property (nonatomic, readonly) NSMutableDictionary *currentPageImages;
 @property (nonatomic, readonly) NSMutableDictionary *pageImageMasks;
 @property (nonatomic, readonly) NSMutableDictionary *cgImageMasks;
+
+// Page Control used for stealing page number localizations for accessibility labels
+// I'm not sure I love this technique, but it's the best way to get exact translations for all the languages
+// that Apple supports out of the box
+@property (nonatomic, strong) UIPageControl *accessibilityPageControl;
 @end
 
 @implementation SMPageControl
@@ -39,6 +45,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	CGImageRef			_pageImageMask;
 }
 
+@synthesize pageNames = _pageNames;
 @synthesize pageImages = _pageImages;
 @synthesize currentPageImages = _currentPageImages;
 @synthesize pageImageMasks = _pageImageMasks;
@@ -58,6 +65,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	
 	self.isAccessibilityElement = YES;
 	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently;
+	self.accessibilityPageControl = [[UIPageControl alloc] init];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -444,6 +452,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		return;
 	}
 	
+	self.accessibilityPageControl.numberOfPages = numberOfPages;
+	
 	_numberOfPages = MAX(0, numberOfPages);
 	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
@@ -461,6 +471,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	}
 	
 	_currentPage = currentPage;
+	self.accessibilityPageControl.currentPage = self.currentPage;
 	
 	[self updateAccessibilityValue];
 	
@@ -514,6 +525,16 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	[self setNeedsDisplay];
 }
 
+- (NSMutableDictionary *)pageNames
+{
+	if (nil != _pageNames) {
+		return _pageNames;
+	}
+	
+	_pageNames = [[NSMutableDictionary alloc] init];
+	return _pageNames;
+}
+
 - (NSMutableDictionary *)pageImages
 {
 	if (nil != _pageImages) {
@@ -554,21 +575,37 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	return _cgImageMasks;
 }
 
-#pragma mark - Accessibility
+#pragma mark - UIAccessibility
+
+- (void)setName:(NSString *)name forPage:(NSInteger)pageIndex
+{
+	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
+		return;
+	}
+	
+	self.pageNames[@(pageIndex)] = name;
+	
+}
+
+- (NSString *)nameForPage:(NSInteger)pageIndex
+{
+	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
+		return nil;
+	}
+	
+	return self.pageNames[@(pageIndex)];
+}
 
 - (void)updateAccessibilityValue
 {
-	self.accessibilityValue = [NSString stringWithFormat:@"Page %i of %i", self.currentPage + 1, self.numberOfPages];
-}
-
-- (void)accessibilityIncrement
-{
-	self.currentPage = self.currentPage - 1;
-}
-
-- (void)accessibilityDecrement
-{
-	self.currentPage = self.currentPage + 1;
+	NSString *pageName = [self nameForPage:self.currentPage];
+	NSString *accessibilityValue = self.accessibilityPageControl.accessibilityValue;
+	
+	if (pageName) {
+		self.accessibilityValue = [NSString stringWithFormat:@"%@ - %@", pageName, accessibilityValue];
+	} else {
+		self.accessibilityValue = accessibilityValue;
+	}
 }
 
 @end
