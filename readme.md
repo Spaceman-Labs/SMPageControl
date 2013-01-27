@@ -17,8 +17,9 @@ SMPageControl has a variety of simple (yet powerful) areas of customization, and
 * Image Masks as Indicators
 * Per-Indicator customization
 * Extensive Support for UIAppearance
+* Extended Support for UIAccessibility
 
-![Screenshot](http://spacemanlabs.com/github/SMPageControl-2.png)
+![Screenshot](http://spacemanlabs.com/github/SMPageControl-2.2.png)
 
 ## Example Usage
 
@@ -31,6 +32,25 @@ pageControl.currentPageIndicatorImage = [UIImage imageNamed:@"currentPageDot"];
 [self.view addSubview:pageControl];
 
 ```
+
+## UIAccessibility Additions
+
+UIPageControl (like all Apple controls) provides out of the box support for UIAccessibility. The default behavior is to set the accessibility value to "page [current page + 1] of [number of pages]". e.g. "page 1 of 10"
+
+SMPageControl provides the exact same functionality, but also allows you to name individual pages. This is extremely useful when using per page indicator images, where one or more page is likely to have a specific usage that is identifiable to the user.
+
+``` objective-c
+SMPageControl *pageControl = [[SMPageControl alloc] init];
+[pageControl setImage:[UIImage imageNamed:@"searchDot"] forPage:0];
+[pageControl setCurrentImage:[UIImage imageNamed:@"currentSearchDot"] forPage:0];
+[pageControl setImage:[UIImage imageNamed:@"appleDot"] forPage:1];
+[pageControl setCurrentImage:[UIImage imageNamed:@"currentAppleDot"] forPage:1];
+[pageControl setName:@"Search" forPage:0];
+[pageControl setName:@"Apple" forPage:1];
+
+```
+
+![Screenshot](http://spacemanlabs.com/github/SMPageControl-3.png)
 
 ## More Info
 
