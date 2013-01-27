@@ -465,12 +465,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 }
 
 - (void)setCurrentPage:(NSInteger)currentPage sendEvent:(BOOL)sendEvent canDefer:(BOOL)defer
-{
-	if (currentPage < 0 || currentPage >= _numberOfPages) {
-		return;
-	}
-	
-	_currentPage = currentPage;
+{	
+	_currentPage = MIN(MAX(0, currentPage), _numberOfPages - 1);
 	self.accessibilityPageControl.currentPage = self.currentPage;
 	
 	[self updateAccessibilityValue];
