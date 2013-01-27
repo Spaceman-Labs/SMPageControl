@@ -43,7 +43,10 @@
 	[self.spacePageControl6 setCurrentImage:[UIImage imageNamed:@"currentSearchDot"] forPage:0];
 	[self.spacePageControl6 setImage:[UIImage imageNamed:@"appleDot"] forPage:1];
 	[self.spacePageControl6 setCurrentImage:[UIImage imageNamed:@"currentAppleDot"] forPage:1];
-	self.spacePageControl6.currentPage = 3;
+	[self.spacePageControl6 setName:@"Search" forPage:0];
+	[self.spacePageControl6 setName:@"Apple" forPage:1];
+
+	self.spacePageControl6.currentPage = 1;
 	
 	self.spacePageControl7.pageIndicatorTintColor = [[UIColor darkGrayColor] colorWithAlphaComponent:0.7f];
 	self.spacePageControl7.currentPageIndicatorTintColor = [UIColor yellowColor];
