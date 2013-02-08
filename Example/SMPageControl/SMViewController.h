@@ -11,15 +11,15 @@
 
 @interface SMViewController : UIViewController
 
-@property (nonatomic, readonly) IBOutlet UIScrollView *scrollview;
-@property (nonatomic, readonly) IBOutlet UIPageControl *pageControl;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl1;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl2;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl3;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl4;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl5;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl6;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl7;
-@property (nonatomic, readonly) IBOutlet SMPageControl *spacePageControl8;
+@property (nonatomic, weak) IBOutlet UIScrollView *scrollview;
+@property (nonatomic, weak) IBOutlet UIPageControl *pageControl;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl1;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl2;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl3;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl4;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl5;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl6;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl7;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl8;
 
 @end
