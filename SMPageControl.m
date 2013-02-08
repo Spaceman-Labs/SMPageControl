@@ -79,10 +79,15 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
     return self;
 }
 
-- (void)awakeFromNib
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
-	[super awakeFromNib];
-	[self _initialize];
+    self = [super initWithCoder:aDecoder];
+    if (nil == self) {
+        return nil;
+    }
+
+    [self _initialize];
+    return self;
 }
 
 - (void)dealloc
