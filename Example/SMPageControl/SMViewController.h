@@ -11,7 +11,6 @@
 
 @interface SMViewController : UIViewController
 
-@property (nonatomic, weak) IBOutlet UIScrollView *scrollview;
 @property (nonatomic, weak) IBOutlet UIPageControl *pageControl;
 @property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl1;
 @property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl2;
