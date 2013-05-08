@@ -150,7 +150,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	CGImageRef maskingImage = nil;
 	CGSize maskSize = CGSizeZero;
 	
-	for (NSUInteger i = 0; i < _numberOfPages; i++) {
+	for (NSInteger i = 0; i < _numberOfPages; i++) {
 		NSNumber *indexNumber = @(i);
 		
 		if (i == _displayedPage) {
@@ -298,7 +298,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
     }
 }
 
-- (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
+- (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex
 {
     [self _setImage:image forPage:pageIndex type:SMPageControlImageTypeNormal];
 	[self _updateMeasuredIndicatorSizes];
