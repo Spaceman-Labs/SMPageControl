@@ -15,6 +15,7 @@ SMPageControl has a variety of simple (yet powerful) areas of customization, and
 * Indicator Alignment
 * Images as Indicators
 * Image Masks as Indicators
+* Advanced Tap Option
 * Per-Indicator customization
 * Extensive Support for UIAppearance
 * Extended Support for UIAccessibility
@@ -30,6 +31,16 @@ pageControl.pageIndicatorImage = [UIImage imageNamed:@"pageDot"];
 pageControl.currentPageIndicatorImage = [UIImage imageNamed:@"currentPageDot"];
 [pageControl sizeToFit];
 [self.view addSubview:pageControl];
+
+```
+
+## Advanced Tap (Tap to select indivisual Indicator)
+
+As with SMPageControl you can use bigger indicator and more spacing between them, one may want to jump to specific indocator by just tapping on it, insetad of default UIPageControl-type left/right side tap-tap-tap style. So if you want that, you have it. Just make useAdvancedTap to YES (which is by default NO).
+
+``` objective-c
+SMPageControl *pageControl = /* Initialization and other configs */
+pageControl.useAdvancedTap = YES;
 
 ```
 
