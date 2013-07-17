@@ -237,17 +237,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
     CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
     CGRect rect = CGRectMake(0, 0, size.width, size.height);
     rect.size.height = self.frame.size.height;
-    switch (self.alignment) {
-        case SMPageControlAlignmentCenter:
-            rect.origin.x = (self.frame.size.width-rect.size.width)/2.0;
-            break;
-        case SMPageControlAlignmentRight:
-            rect.origin.x = self.frame.size.width-rect.size.width;
-            break;
-        case SMPageControlAlignmentLeft: // DO NOTHING
-        default:
-            break;
-    }
+    rect.origin.x = [self _leftOffset];
+
     if (CGRectContainsPoint(rect, point)) {
         float segment = rect.size.width/self.numberOfPages;
         int index = (point.x - rect.origin.x)/segment;
