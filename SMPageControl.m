@@ -360,7 +360,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	size_t pixelsWide = image.size.width * image.scale;
 	size_t pixelsHigh = image.size.height * image.scale;
 	int bitmapBytesPerRow = (pixelsWide * 1);
-	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, kCGImageAlphaOnly);
+	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, (CGBitmapInfo)kCGImageAlphaOnly);
 	CGContextTranslateCTM(context, 0.f, pixelsHigh);
 	CGContextScaleCTM(context, 1.0f, -1.0f);
 	
