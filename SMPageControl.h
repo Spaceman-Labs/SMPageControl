@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView;
 - (void)setScrollViewContentOffsetForCurrentPage:(UIScrollView *)scrollView animated:(BOOL)animated;
 
-#pragma UIAccessibility
+#pragma mark - UIAccessibility
 
 // SMPageControl mirrors UIPageControl's standard accessibility functionality by default.
 // Basically, the accessibility label is set to "[current page index + 1] of [page count]".
