@@ -28,6 +28,8 @@
 	self.spacePageControl7.numberOfPages = 10;
 	self.spacePageControl8.numberOfPages = 10;
 	
+    self.spacePageControl5.useAdvancedTap = YES;
+    
 	self.spacePageControl2.indicatorMargin = 20.0f;
 	self.spacePageControl2.indicatorDiameter = 10.0f;
 	

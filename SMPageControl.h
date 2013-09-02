@@ -22,6 +22,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 
 @interface SMPageControl : UIControl
 
+@property (nonatomic) BOOL useAdvancedTap;
+
 @property (nonatomic) NSInteger numberOfPages;
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) CGFloat indicatorMargin							UI_APPEARANCE_SELECTOR; // deafult is 10

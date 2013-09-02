@@ -233,6 +233,25 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	return rect;
 }
 
+-(NSInteger) _indexOfIndicatorAtPoint:(CGPoint) point {
+    CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+    CGRect rect = CGRectMake(0, 0, size.width, size.height);
+    rect.size.height = self.frame.size.height;
+    rect.origin.x = [self _leftOffset];
+
+    if (CGRectContainsPoint(rect, point)) {
+        float segment = rect.size.width/self.numberOfPages;
+        int index = (point.x - rect.origin.x)/segment;
+        return index;
+    } else if(point.x < rect.origin.x){
+        return MAX(0, self.currentPage-1);
+    } else if (point.x > rect.origin.x){
+        return MIN(self.numberOfPages-1, self.currentPage+1);
+    }
+    // should not be here
+    return 0;
+}
+
 - (void)_setImage:(UIImage *)image forPage:(NSInteger)pageIndex type:(SMPageControlImageType)type
 {
 	if (pageIndex < 0 || pageIndex >= _numberOfPages) {
@@ -412,14 +431,20 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	CGFloat left = [self _leftOffset];
-	CGFloat middle = left + (size.width / 2.0f);
-	if (point.x < middle) {
-		[self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
-	} else {
-		[self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
-	}
+    if (self.useAdvancedTap) {
+        [self setCurrentPage:[self _indexOfIndicatorAtPoint:point]
+                   sendEvent:YES
+                    canDefer:YES];
+    } else {
+        CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+        CGFloat left = [self _leftOffset];
+        CGFloat middle = left + (size.width / 2.0f);
+        if (point.x < middle) {
+            [self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
+        } else {
+            [self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
+        }
+    }
 }
 
 #pragma mark - Accessors
