@@ -15,12 +15,21 @@
 
 #define DEFAULT_INDICATOR_WIDTH 6.0f
 #define DEFAULT_INDICATOR_MARGIN 10.0f
+
+#define DEFAULT_INDICATOR_WIDTH_LARGE 7.0f
+#define DEFAULT_INDICATOR_MARGIN_LARGE 9.0f
+
 #define MIN_HEIGHT 36.0f
 
 typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
 	SMPageControlImageTypeCurrent,
 	SMPageControlImageTypeMask
+};
+
+typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
+	SMPageControlDefaultStyleClassic = 0,
+	SMPageControlDefaultStyleModern
 };
 
 @interface SMPageControl ()
@@ -58,10 +67,13 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	_tapBehavior = SMPageControlTapBehaviorStep;
     
 	self.backgroundColor = [UIColor clearColor];
-	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
-	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
-	_indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
-	_indicatorMargin = DEFAULT_INDICATOR_MARGIN;
+	
+#ifdef __IPHONE_7_0
+	[self setStyleWithDefaults:SMPageControlDefaultStyleModern];
+#else
+	[self setStyleWithDefaults:SMPageControlDefaultStyleClassic];
+#endif
+	
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
 	
@@ -360,6 +372,23 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	CGPoint offset = scrollView.contentOffset;
 	offset.x = scrollView.bounds.size.width * self.currentPage;
 	[scrollView setContentOffset:offset animated:animated];
+}
+
+- (void)setStyleWithDefaults:(SMPageControlStyleDefaults)defaultStyle
+{
+	switch (defaultStyle) {
+		case SMPageControlDefaultStyleModern:
+			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH_LARGE;
+			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN_LARGE;
+			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2f];
+			break;
+		case SMPageControlDefaultStyleClassic:
+		default:
+			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
+			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN;
+			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+			break;
+	}
 }
 
 #pragma mark -
