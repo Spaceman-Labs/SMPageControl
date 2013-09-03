@@ -32,6 +32,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
 	SMPageControlDefaultStyleModern
 };
 
+static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
+
 @interface SMPageControl ()
 @property (strong, readonly, nonatomic) NSMutableDictionary *pageNames;
 @property (strong, readonly, nonatomic) NSMutableDictionary *pageImages;
@@ -61,6 +63,17 @@ typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
 @synthesize pageImageMasks = _pageImageMasks;
 @synthesize cgImageMasks = _cgImageMasks;
 
++ (void)initialize
+{
+	NSString *reqSysVer = @"7.0";
+	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) {
+		_defaultStyleForSystemVersion = SMPageControlDefaultStyleModern;
+	} else {
+		_defaultStyleForSystemVersion = SMPageControlDefaultStyleClassic;
+	}
+}
+
 - (void)_initialize
 {
 	_numberOfPages = 0;
@@ -68,8 +81,10 @@ typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
     
 	self.backgroundColor = [UIColor clearColor];
 	
+	// If the app wasn't linked against iOS 7 or newer, always use the classic style
+	// otherwise, use the style of the current OS.
 #ifdef __IPHONE_7_0
-	[self setStyleWithDefaults:SMPageControlDefaultStyleModern];
+	[self setStyleWithDefaults:_defaultStyleForSystemVersion];
 #else
 	[self setStyleWithDefaults:SMPageControlDefaultStyleClassic];
 #endif

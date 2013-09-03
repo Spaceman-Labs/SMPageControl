@@ -21,7 +21,7 @@ SMPageControl has a variety of simple (yet powerful) areas of customization, and
 * Extended Support for UIAccessibility
 * iOS 7 Ready
 
-![Screenshot](http://spacemanlabs.com/github/SMPageControl-2.2.png)
+![Screenshot](http://spacemanlabs.com/github/SMPageControl-4.png) ![Screenshot](http://spacemanlabs.com/github/SMPageControl-5.png)
 
 ## Example Usage
 
