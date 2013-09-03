@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 - (void)_initialize
 {
 	_numberOfPages = 0;
-	_individualPageTaps = NO;
+	_tapBehavior = SMPageControlTapBehaviorStep;
     
 	self.backgroundColor = [UIColor clearColor];
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
@@ -420,7 +420,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
     
-    if (self.individualPageTaps) {
+    if (SMPageControlTapBehaviorStep == self.tapBehavior) {
         __block NSInteger pageTouched = -1;
         [self.pageRects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             CGRect indicatorRect = [obj CGRectValue];

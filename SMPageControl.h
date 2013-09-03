@@ -20,6 +20,11 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 	SMPageControlVerticalAlignmentBottom
 };
 
+typedef NS_ENUM(NSUInteger, SMPageControlTapBehavior) {
+	SMPageControlTapBehaviorStep	= 1,
+	SMPageControlTapBehaviorJump
+};
+
 @interface SMPageControl : UIControl
 
 @property (nonatomic) NSInteger numberOfPages;
@@ -38,7 +43,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 @property (nonatomic) BOOL hidesForSinglePage;			// hide the the indicator if there is only one page. default is NO
 @property (nonatomic) BOOL defersCurrentPageDisplay;	// if set, clicking to a new page won't update the currently displayed page until -updateCurrentPageDisplay is called. default is NO
 
-@property (nonatomic) BOOL individualPageTaps;	// if set to True, taping individual indicators will change to that specified page, rather than simply incrementing or decrementing the values.
+@property (nonatomic) SMPageControlTapBehavior tapBehavior;	// SMPageControlTapBehaviorStep provides an increment/decrement behavior exactly like UIPageControl. SMPageControlTapBehaviorJump allows specific pages to be selected by tapping their respective indicator. Default is SMPageControlTapBehaviorStep
 
 - (void)updateCurrentPageDisplay;						// update page display to match the currentPage. ignored if defersCurrentPageDisplay is NO. setting the page value directly will update immediately
 
