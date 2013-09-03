@@ -17,7 +17,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	
+#ifndef __IPHONE_7_0
 	self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"retro_intro"]];
+#endif
 		
 	self.spacePageControl1.numberOfPages = 10;
 	self.spacePageControl2.numberOfPages = 10;
