@@ -24,12 +24,12 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 };
 
 @interface SMPageControl ()
-@property (nonatomic, readonly) NSMutableDictionary *pageNames;
-@property (nonatomic, readonly) NSMutableDictionary *pageImages;
-@property (nonatomic, readonly) NSMutableDictionary *currentPageImages;
-@property (nonatomic, readonly) NSMutableDictionary *pageImageMasks;
-@property (nonatomic, readonly) NSMutableDictionary *cgImageMasks;
-@property NSMutableArray *pageRects;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageNames;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageImages;
+@property (strong, readonly, nonatomic) NSMutableDictionary *currentPageImages;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageImageMasks;
+@property (strong, readonly, nonatomic) NSMutableDictionary *cgImageMasks;
+@property (strong, readwrite, nonatomic) NSArray *pageRects;
 
 // Page Control used for stealing page number localizations for accessibility labels
 // I'm not sure I love this technique, but it's the best way to get exact translations for all the languages
@@ -107,7 +107,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 - (void)_renderPages:(CGContextRef)context rect:(CGRect)rect
 {
-    _pageRects = [@[] mutableCopy];
+	NSMutableArray *pageRects = [NSMutableArray arrayWithCapacity:self.numberOfPages];
     
 	if (_numberOfPages < 2 && _hidesForSinglePage) {
 		return;
@@ -153,28 +153,30 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		}
 				
 		[fillColor set];
-		CGRect imageRect;
+		CGRect indicatorRect;
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
 			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
-            imageRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
+            indicatorRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
 		} else if (maskingImage) {
 			yOffset = [self _topOffsetForHeight:maskSize.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - maskSize.width) / 2.0f);
-			imageRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
-			CGContextDrawImage(context, imageRect, maskingImage);
+			indicatorRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
+			CGContextDrawImage(context, indicatorRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
-            imageRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
-			CGContextFillEllipseInRect(context, imageRect);
+            indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
+			CGContextFillEllipseInRect(context, indicatorRect);
 		}
 		
-        [_pageRects addObject:[NSValue valueWithCGRect:imageRect]];
+        [pageRects addObject:[NSValue valueWithCGRect:indicatorRect]];
 		maskingImage = NULL;
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
+	
+	self.pageRects = pageRects;
 	
 }
 
@@ -421,17 +423,20 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	CGPoint point = [touch locationInView:self];
     
     if (SMPageControlTapBehaviorStep == self.tapBehavior) {
-        __block NSInteger pageTouched = -1;
-        [self.pageRects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            CGRect indicatorRect = [obj CGRectValue];
+		
+        __block NSInteger tappedIndicatorIndex = NSNotFound;
+		
+        [self.pageRects enumerateObjectsUsingBlock:^(NSValue *value, NSUInteger index, BOOL *stop) {
+            CGRect indicatorRect = [value CGRectValue];
+						
             if (CGRectContainsPoint(indicatorRect, point)) {
-                pageTouched = idx;
+                tappedIndicatorIndex = index;
                 *stop = YES;
             }
         }];
         
-        if (pageTouched != -1) {
-            [self setCurrentPage:pageTouched sendEvent:YES canDefer:YES];
+        if (NSNotFound != tappedIndicatorIndex) {
+            [self setCurrentPage:tappedIndicatorIndex sendEvent:YES canDefer:YES];
             return;
         }
     }
