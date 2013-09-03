@@ -29,6 +29,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 @property (nonatomic, readonly) NSMutableDictionary *currentPageImages;
 @property (nonatomic, readonly) NSMutableDictionary *pageImageMasks;
 @property (nonatomic, readonly) NSMutableDictionary *cgImageMasks;
+@property NSMutableArray *pageRects;
 
 // Page Control used for stealing page number localizations for accessibility labels
 // I'm not sure I love this technique, but it's the best way to get exact translations for all the languages
@@ -54,7 +55,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 - (void)_initialize
 {
 	_numberOfPages = 0;
-	
+	_individualPageTaps = NO;
+    
 	self.backgroundColor = [UIColor clearColor];
 	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
 	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
@@ -105,6 +107,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 - (void)_renderPages:(CGContextRef)context rect:(CGRect)rect
 {
+    _pageRects = [@[] mutableCopy];
+    
 	if (_numberOfPages < 2 && _hidesForSinglePage) {
 		return;
 	}
@@ -149,22 +153,25 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		}
 				
 		[fillColor set];
-		
+		CGRect imageRect;
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
 			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
+            imageRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
 		} else if (maskingImage) {
 			yOffset = [self _topOffsetForHeight:maskSize.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - maskSize.width) / 2.0f);
-			CGRect imageRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
+			imageRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
 			CGContextDrawImage(context, imageRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
-			CGContextFillEllipseInRect(context, CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
+            imageRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
+			CGContextFillEllipseInRect(context, imageRect);
 		}
 		
+        [_pageRects addObject:[NSValue valueWithCGRect:imageRect]];
 		maskingImage = NULL;
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
@@ -412,14 +419,32 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	CGFloat left = [self _leftOffset];
-	CGFloat middle = left + (size.width / 2.0f);
-	if (point.x < middle) {
-		[self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
-	} else {
-		[self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
-	}
+    
+    if (self.individualPageTaps) {
+        __block NSInteger pageTouched = -1;
+        [self.pageRects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            CGRect indicatorRect = [obj CGRectValue];
+            if (CGRectContainsPoint(indicatorRect, point)) {
+                pageTouched = idx;
+                *stop = YES;
+            }
+        }];
+        
+        if (pageTouched != -1) {
+            [self setCurrentPage:pageTouched sendEvent:YES canDefer:YES];
+            return;
+        }
+    }
+    
+    CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+    CGFloat left = [self _leftOffset];
+    CGFloat middle = left + (size.width / 2.0f);
+    if (point.x < middle) {
+        [self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
+    } else {
+        [self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
+    }
+    
 }
 
 #pragma mark - Accessors
