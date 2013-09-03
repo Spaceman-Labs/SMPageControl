@@ -187,7 +187,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	CGFloat left = 0.0f;
 	switch (_alignment) {
 		case SMPageControlAlignmentCenter:
-			left = CGRectGetMidX(rect) - (size.width / 2.0f);
+			left = ceilf(CGRectGetMidX(rect) - (size.width / 2.0f));
 			break;
 		case SMPageControlAlignmentRight:
 			left = CGRectGetMaxX(rect) - size.width;
