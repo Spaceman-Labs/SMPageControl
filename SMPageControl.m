@@ -422,7 +422,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
     
-    if (SMPageControlTapBehaviorStep == self.tapBehavior) {
+    if (SMPageControlTapBehaviorJump == self.tapBehavior) {
 		
         __block NSInteger tappedIndicatorIndex = NSNotFound;
 		
