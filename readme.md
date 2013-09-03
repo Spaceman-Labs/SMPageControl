@@ -15,9 +15,11 @@ SMPageControl has a variety of simple (yet powerful) areas of customization, and
 * Indicator Alignment
 * Images as Indicators
 * Image Masks as Indicators
-* Per-Indicator customization
+* Per-Indicator Customization
+* Directly Tappable Indicators
 * Extensive Support for UIAppearance
 * Extended Support for UIAccessibility
+* iOS 7 Ready
 
 ![Screenshot](http://spacemanlabs.com/github/SMPageControl-2.2.png)
 
@@ -31,6 +33,15 @@ pageControl.currentPageIndicatorImage = [UIImage imageNamed:@"currentPageDot"];
 [pageControl sizeToFit];
 [self.view addSubview:pageControl];
 
+```
+
+## Direct Page Selection
+
+Because SMPageControl has such a high degree of flexibility, it's not uncommon for indicator images to be large enough to tap directly. The `tapBehavior` property allows the page control indicators to be individually tappable.
+
+``` objective-c
+SMPageControl *pageControl = [[SMPageControl alloc] init];
+pageControl.tapBehavior = SMPageControlTapBehaviorJump;
 ```
 
 ## UIAccessibility Additions
