@@ -367,13 +367,11 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	return [self _imageForPage:pageIndex type:SMPageControlImageTypeMask];
 }
 
-- (void)sizeToFit
+- (CGSize)sizeThatFits:(CGSize)size
 {
-	CGRect frame = self.frame;
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	size.height = MAX(size.height, MIN_HEIGHT);
-	frame.size = size;
-	self.frame = frame;
+    CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
+	sizeThatFits.height = MAX(sizeThatFits.height, MIN_HEIGHT);
+    return sizeThatFits;
 }
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
