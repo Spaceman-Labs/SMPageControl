@@ -93,7 +93,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
 	
 	self.isAccessibilityElement = YES;
-	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently;
+	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently | UIAccessibilityTraitAdjustable;
 	self.accessibilityPageControl = [[UIPageControl alloc] init];
 }
 
@@ -679,6 +679,18 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	} else {
 		self.accessibilityValue = accessibilityValue;
 	}
+}
+
+#pragma mark - UIAccessibilityAction
+
+- (void)accessibilityIncrement
+{
+	[self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:NO];
+}
+
+- (void)accessibilityDecrement
+{
+	[self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:NO];
 }
 
 @end
