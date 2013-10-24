@@ -463,7 +463,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
 	}
 
-	[self invalidateIntrinsicContentSize];
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 }
 
 
@@ -566,7 +568,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	self.accessibilityPageControl.numberOfPages = numberOfPages;
 	
 	_numberOfPages = MAX(0, numberOfPages);
-	[self invalidateIntrinsicContentSize];
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
 }
