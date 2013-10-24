@@ -522,14 +522,14 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	if (indicatorDiameter == _indicatorDiameter) {
 		return;
 	}
+	
+	_indicatorDiameter = indicatorDiameter;
 
 	// Absolute minimum height of the control is the indicator diameter
 	if (_minHeight < indicatorDiameter) {
-		_minHeight = indicatorDiameter;
-		[self setNeedsLayout];
+		self.minHeight = indicatorDiameter;
 	}
-	
-	_indicatorDiameter = indicatorDiameter;
+
 	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
 }
@@ -556,6 +556,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	}
 
 	_minHeight = minHeight;
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 	[self setNeedsLayout];
 }
 
