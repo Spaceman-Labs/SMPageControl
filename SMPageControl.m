@@ -19,8 +19,6 @@
 #define DEFAULT_INDICATOR_WIDTH_LARGE 7.0f
 #define DEFAULT_INDICATOR_MARGIN_LARGE 9.0f
 
-#define MIN_HEIGHT 36.0f
-
 typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
 	SMPageControlImageTypeCurrent,
@@ -78,6 +76,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 {
 	_numberOfPages = 0;
 	_tapBehavior = SMPageControlTapBehaviorStep;
+	_minHeight = 36.0f;
     
 	self.backgroundColor = [UIColor clearColor];
 	
@@ -370,13 +369,13 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 - (CGSize)sizeThatFits:(CGSize)size
 {
 	CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
-	sizeThatFits.height = MAX(sizeThatFits.height, MIN_HEIGHT);
+	sizeThatFits.height = MAX(sizeThatFits.height, _minHeight);
 	return sizeThatFits;
 }
 
 - (CGSize)intrinsicContentSize
 {
-	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, MIN_HEIGHT));
+	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, _minHeight));
 	return intrinsicContentSize;
 }
 
@@ -529,6 +528,21 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	
 	_indicatorMargin = indicatorMargin;
 	[self setNeedsDisplay];
+}
+
+- (void)setMinHeight:(CGFloat)minHeight
+{
+	if (minHeight == _minHeight) {
+		return;
+	}
+
+   // Absolute minimum height of the control is the indicator diameter
+	if (minHeight < _indicatorDiameter) {
+		minHeight = _indicatorDiameter;
+	}
+
+	_minHeight = minHeight;
+	[self setNeedsLayout];
 }
 
 - (void)setNumberOfPages:(NSInteger)numberOfPages
