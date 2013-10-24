@@ -520,6 +520,12 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	if (indicatorDiameter == _indicatorDiameter) {
 		return;
 	}
+
+	// Absolute minimum height of the control is the indicator diameter
+	if (_minHeight < indicatorDiameter) {
+		_minHeight = indicatorDiameter;
+		[self setNeedsLayout];
+	}
 	
 	_indicatorDiameter = indicatorDiameter;
 	[self _updateMeasuredIndicatorSizes];
