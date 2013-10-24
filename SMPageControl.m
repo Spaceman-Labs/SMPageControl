@@ -369,9 +369,15 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
+	CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
 	sizeThatFits.height = MAX(sizeThatFits.height, MIN_HEIGHT);
-    return sizeThatFits;
+	return sizeThatFits;
+}
+
+- (CGSize)intrinsicContentSize
+{
+	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, MIN_HEIGHT));
+	return intrinsicContentSize;
 }
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
@@ -451,6 +457,8 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	if (self.pageIndicatorMaskImage) {
 		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
 	}
+
+	[self invalidateIntrinsicContentSize];
 }
 
 
