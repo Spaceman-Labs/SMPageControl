@@ -15,9 +15,11 @@
 
 #define DEFAULT_INDICATOR_WIDTH 6.0f
 #define DEFAULT_INDICATOR_MARGIN 10.0f
+#define DEFAULT_MIN_HEIGHT 36.0f
 
 #define DEFAULT_INDICATOR_WIDTH_LARGE 7.0f
 #define DEFAULT_INDICATOR_MARGIN_LARGE 9.0f
+#define DEFAULT_MIN_HEIGHT_LARGE 36.0f
 
 typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
@@ -76,7 +78,6 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 {
 	_numberOfPages = 0;
 	_tapBehavior = SMPageControlTapBehaviorStep;
-	_minHeight = 36.0f;
     
 	self.backgroundColor = [UIColor clearColor];
 	
@@ -399,12 +400,14 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH_LARGE;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN_LARGE;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2f];
+			self.minHeight = DEFAULT_MIN_HEIGHT_LARGE;
 			break;
 		case SMPageControlDefaultStyleClassic:
 		default:
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+			self.minHeight = DEFAULT_MIN_HEIGHT;
 			break;
 	}
 }
