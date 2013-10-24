@@ -376,6 +376,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (CGSize)intrinsicContentSize
 {
+	if (_numberOfPages < 1 || (_numberOfPages < 2 && _hidesForSinglePage)) {
+		return CGSizeMake(UIViewNoIntrinsicMetric, 0.0f);
+	}
 	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, _minHeight));
 	return intrinsicContentSize;
 }
@@ -557,6 +560,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	self.accessibilityPageControl.numberOfPages = numberOfPages;
 	
 	_numberOfPages = MAX(0, numberOfPages);
+	[self invalidateIntrinsicContentSize];
 	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
 }
