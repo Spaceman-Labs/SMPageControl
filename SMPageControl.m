@@ -15,11 +15,11 @@
 
 #define DEFAULT_INDICATOR_WIDTH 6.0f
 #define DEFAULT_INDICATOR_MARGIN 10.0f
+#define DEFAULT_MIN_HEIGHT 36.0f
 
 #define DEFAULT_INDICATOR_WIDTH_LARGE 7.0f
 #define DEFAULT_INDICATOR_MARGIN_LARGE 9.0f
-
-#define MIN_HEIGHT 36.0f
+#define DEFAULT_MIN_HEIGHT_LARGE 36.0f
 
 typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
@@ -370,9 +370,18 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
-	sizeThatFits.height = MAX(sizeThatFits.height, MIN_HEIGHT);
-    return sizeThatFits;
+	CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
+	sizeThatFits.height = MAX(sizeThatFits.height, _minHeight);
+	return sizeThatFits;
+}
+
+- (CGSize)intrinsicContentSize
+{
+	if (_numberOfPages < 1 || (_numberOfPages < 2 && _hidesForSinglePage)) {
+		return CGSizeMake(UIViewNoIntrinsicMetric, 0.0f);
+	}
+	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, _minHeight));
+	return intrinsicContentSize;
 }
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
@@ -395,12 +404,14 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH_LARGE;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN_LARGE;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2f];
+			self.minHeight = DEFAULT_MIN_HEIGHT_LARGE;
 			break;
 		case SMPageControlDefaultStyleClassic:
 		default:
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+			self.minHeight = DEFAULT_MIN_HEIGHT;
 			break;
 	}
 }
@@ -451,6 +462,10 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	
 	if (self.pageIndicatorMaskImage) {
 		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
+	}
+
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
 	}
 }
 
@@ -510,6 +525,12 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	}
 	
 	_indicatorDiameter = indicatorDiameter;
+
+	// Absolute minimum height of the control is the indicator diameter
+	if (_minHeight < indicatorDiameter) {
+		self.minHeight = indicatorDiameter;
+	}
+
 	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
 }
@@ -524,6 +545,24 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	[self setNeedsDisplay];
 }
 
+- (void)setMinHeight:(CGFloat)minHeight
+{
+	if (minHeight == _minHeight) {
+		return;
+	}
+
+   // Absolute minimum height of the control is the indicator diameter
+	if (minHeight < _indicatorDiameter) {
+		minHeight = _indicatorDiameter;
+	}
+
+	_minHeight = minHeight;
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
+	[self setNeedsLayout];
+}
+
 - (void)setNumberOfPages:(NSInteger)numberOfPages
 {
 	if (numberOfPages == _numberOfPages) {
@@ -533,6 +572,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	self.accessibilityPageControl.numberOfPages = numberOfPages;
 	
 	_numberOfPages = MAX(0, numberOfPages);
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
 }
