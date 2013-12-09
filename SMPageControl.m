@@ -95,6 +95,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	self.isAccessibilityElement = YES;
 	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently;
 	self.accessibilityPageControl = [[UIPageControl alloc] init];
+	self.contentMode = UIViewContentModeRedraw;
 }
 
 - (id)initWithFrame:(CGRect)frame
