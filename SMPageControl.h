@@ -20,12 +20,18 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 	SMPageControlVerticalAlignmentBottom
 };
 
+typedef NS_ENUM(NSUInteger, SMPageControlTapBehavior) {
+	SMPageControlTapBehaviorStep	= 1,
+	SMPageControlTapBehaviorJump
+};
+
 @interface SMPageControl : UIControl
 
 @property (nonatomic) NSInteger numberOfPages;
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) CGFloat indicatorMargin							UI_APPEARANCE_SELECTOR; // deafult is 10
 @property (nonatomic) CGFloat indicatorDiameter							UI_APPEARANCE_SELECTOR; // deafult is 6
+@property (nonatomic) CGFloat minHeight									UI_APPEARANCE_SELECTOR; // default is 36, cannot be less than indicatorDiameter
 @property (nonatomic) SMPageControlAlignment alignment					UI_APPEARANCE_SELECTOR; // deafult is Center
 @property (nonatomic) SMPageControlVerticalAlignment verticalAlignment	UI_APPEARANCE_SELECTOR;	// deafult is Middle
 
@@ -37,6 +43,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 
 @property (nonatomic) BOOL hidesForSinglePage;			// hide the the indicator if there is only one page. default is NO
 @property (nonatomic) BOOL defersCurrentPageDisplay;	// if set, clicking to a new page won't update the currently displayed page until -updateCurrentPageDisplay is called. default is NO
+
+@property (nonatomic) SMPageControlTapBehavior tapBehavior;	// SMPageControlTapBehaviorStep provides an increment/decrement behavior exactly like UIPageControl. SMPageControlTapBehaviorJump allows specific pages to be selected by tapping their respective indicator. Default is SMPageControlTapBehaviorStep
 
 - (void)updateCurrentPageDisplay;						// update page display to match the currentPage. ignored if defersCurrentPageDisplay is NO. setting the page value directly will update immediately
 
@@ -54,7 +62,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlVerticalAlignment) {
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView;
 - (void)setScrollViewContentOffsetForCurrentPage:(UIScrollView *)scrollView animated:(BOOL)animated;
 
-#pragma mark UIAccessibility
+#pragma mark - UIAccessibility
 
 // SMPageControl mirrors UIPageControl's standard accessibility functionality by default.
 // Basically, the accessibility label is set to "[current page index + 1] of [page count]".

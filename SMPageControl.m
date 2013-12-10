@@ -15,7 +15,11 @@
 
 #define DEFAULT_INDICATOR_WIDTH 6.0f
 #define DEFAULT_INDICATOR_MARGIN 10.0f
-#define MIN_HEIGHT 36.0f
+#define DEFAULT_MIN_HEIGHT 36.0f
+
+#define DEFAULT_INDICATOR_WIDTH_LARGE 7.0f
+#define DEFAULT_INDICATOR_MARGIN_LARGE 9.0f
+#define DEFAULT_MIN_HEIGHT_LARGE 36.0f
 
 typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
@@ -23,12 +27,20 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeMask
 };
 
+typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
+	SMPageControlDefaultStyleClassic = 0,
+	SMPageControlDefaultStyleModern
+};
+
+static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
+
 @interface SMPageControl ()
-@property (nonatomic, readonly) NSMutableDictionary *pageNames;
-@property (nonatomic, readonly) NSMutableDictionary *pageImages;
-@property (nonatomic, readonly) NSMutableDictionary *currentPageImages;
-@property (nonatomic, readonly) NSMutableDictionary *pageImageMasks;
-@property (nonatomic, readonly) NSMutableDictionary *cgImageMasks;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageNames;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageImages;
+@property (strong, readonly, nonatomic) NSMutableDictionary *currentPageImages;
+@property (strong, readonly, nonatomic) NSMutableDictionary *pageImageMasks;
+@property (strong, readonly, nonatomic) NSMutableDictionary *cgImageMasks;
+@property (strong, readwrite, nonatomic) NSArray *pageRects;
 
 // Page Control used for stealing page number localizations for accessibility labels
 // I'm not sure I love this technique, but it's the best way to get exact translations for all the languages
@@ -51,21 +63,39 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 @synthesize pageImageMasks = _pageImageMasks;
 @synthesize cgImageMasks = _cgImageMasks;
 
++ (void)initialize
+{
+	NSString *reqSysVer = @"7.0";
+	NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+	if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending) {
+		_defaultStyleForSystemVersion = SMPageControlDefaultStyleModern;
+	} else {
+		_defaultStyleForSystemVersion = SMPageControlDefaultStyleClassic;
+	}
+}
+
 - (void)_initialize
 {
 	_numberOfPages = 0;
-	
+	_tapBehavior = SMPageControlTapBehaviorStep;
+    
 	self.backgroundColor = [UIColor clearColor];
-	_measuredIndicatorWidth = DEFAULT_INDICATOR_WIDTH;
-	_measuredIndicatorHeight = DEFAULT_INDICATOR_WIDTH;
-	_indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
-	_indicatorMargin = DEFAULT_INDICATOR_MARGIN;
+	
+	// If the app wasn't linked against iOS 7 or newer, always use the classic style
+	// otherwise, use the style of the current OS.
+#ifdef __IPHONE_7_0
+	[self setStyleWithDefaults:_defaultStyleForSystemVersion];
+#else
+	[self setStyleWithDefaults:SMPageControlDefaultStyleClassic];
+#endif
+	
 	_alignment = SMPageControlAlignmentCenter;
 	_verticalAlignment = SMPageControlVerticalAlignmentMiddle;
 	
 	self.isAccessibilityElement = YES;
 	self.accessibilityTraits = UIAccessibilityTraitUpdatesFrequently;
 	self.accessibilityPageControl = [[UIPageControl alloc] init];
+	self.contentMode = UIViewContentModeRedraw;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -105,6 +135,8 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 
 - (void)_renderPages:(CGContextRef)context rect:(CGRect)rect
 {
+	NSMutableArray *pageRects = [NSMutableArray arrayWithCapacity:self.numberOfPages];
+    
 	if (_numberOfPages < 2 && _hidesForSinglePage) {
 		return;
 	}
@@ -149,25 +181,30 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 		}
 				
 		[fillColor set];
-		
+		CGRect indicatorRect;
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
 			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
+            indicatorRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
 		} else if (maskingImage) {
 			yOffset = [self _topOffsetForHeight:maskSize.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - maskSize.width) / 2.0f);
-			CGRect imageRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
-			CGContextDrawImage(context, imageRect, maskingImage);
+			indicatorRect = CGRectMake(centeredXOffset, yOffset, maskSize.width, maskSize.height);
+			CGContextDrawImage(context, indicatorRect, maskingImage);
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
-			CGContextFillEllipseInRect(context, CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter));
+            indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
+			CGContextFillEllipseInRect(context, indicatorRect);
 		}
 		
+        [pageRects addObject:[NSValue valueWithCGRect:indicatorRect]];
 		maskingImage = NULL;
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
+	
+	self.pageRects = pageRects;
 	
 }
 
@@ -178,7 +215,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	CGFloat left = 0.0f;
 	switch (_alignment) {
 		case SMPageControlAlignmentCenter:
-			left = CGRectGetMidX(rect) - (size.width / 2.0f);
+			left = ceilf(CGRectGetMidX(rect) - (size.width / 2.0f));
 			break;
 		case SMPageControlAlignmentRight:
 			left = CGRectGetMaxX(rect) - size.width;
@@ -331,13 +368,20 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	return [self _imageForPage:pageIndex type:SMPageControlImageTypeMask];
 }
 
-- (void)sizeToFit
+- (CGSize)sizeThatFits:(CGSize)size
 {
-	CGRect frame = self.frame;
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	size.height = MAX(size.height, MIN_HEIGHT);
-	frame.size = size;
-	self.frame = frame;
+	CGSize sizeThatFits = [self sizeForNumberOfPages:self.numberOfPages];
+	sizeThatFits.height = MAX(sizeThatFits.height, _minHeight);
+	return sizeThatFits;
+}
+
+- (CGSize)intrinsicContentSize
+{
+	if (_numberOfPages < 1 || (_numberOfPages < 2 && _hidesForSinglePage)) {
+		return CGSizeMake(UIViewNoIntrinsicMetric, 0.0f);
+	}
+	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, _minHeight));
+	return intrinsicContentSize;
 }
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
@@ -353,6 +397,25 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	[scrollView setContentOffset:offset animated:animated];
 }
 
+- (void)setStyleWithDefaults:(SMPageControlStyleDefaults)defaultStyle
+{
+	switch (defaultStyle) {
+		case SMPageControlDefaultStyleModern:
+			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH_LARGE;
+			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN_LARGE;
+			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2f];
+			self.minHeight = DEFAULT_MIN_HEIGHT_LARGE;
+			break;
+		case SMPageControlDefaultStyleClassic:
+		default:
+			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
+			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN;
+			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+			self.minHeight = DEFAULT_MIN_HEIGHT;
+			break;
+	}
+}
+
 #pragma mark -
 
 - (CGImageRef)createMaskForImage:(UIImage *)image CF_RETURNS_RETAINED
@@ -360,7 +423,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	size_t pixelsWide = image.size.width * image.scale;
 	size_t pixelsHigh = image.size.height * image.scale;
 	int bitmapBytesPerRow = (pixelsWide * 1);
-	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, kCGImageAlphaOnly);
+	CGContextRef context = CGBitmapContextCreate(NULL, pixelsWide, pixelsHigh, CGImageGetBitsPerComponent(image.CGImage), bitmapBytesPerRow, NULL, (CGBitmapInfo)kCGImageAlphaOnly);
 	CGContextTranslateCTM(context, 0.f, pixelsHigh);
 	CGContextScaleCTM(context, 1.0f, -1.0f);
 	
@@ -400,6 +463,10 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	if (self.pageIndicatorMaskImage) {
 		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
 	}
+
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 }
 
 
@@ -412,14 +479,35 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView:self];
-	CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
-	CGFloat left = [self _leftOffset];
-	CGFloat middle = left + (size.width / 2.0f);
-	if (point.x < middle) {
-		[self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
-	} else {
-		[self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
-	}
+    
+    if (SMPageControlTapBehaviorJump == self.tapBehavior) {
+		
+        __block NSInteger tappedIndicatorIndex = NSNotFound;
+		
+        [self.pageRects enumerateObjectsUsingBlock:^(NSValue *value, NSUInteger index, BOOL *stop) {
+            CGRect indicatorRect = [value CGRectValue];
+						
+            if (CGRectContainsPoint(indicatorRect, point)) {
+                tappedIndicatorIndex = index;
+                *stop = YES;
+            }
+        }];
+        
+        if (NSNotFound != tappedIndicatorIndex) {
+            [self setCurrentPage:tappedIndicatorIndex sendEvent:YES canDefer:YES];
+            return;
+        }
+    }
+    
+    CGSize size = [self sizeForNumberOfPages:self.numberOfPages];
+    CGFloat left = [self _leftOffset];
+    CGFloat middle = left + (size.width / 2.0f);
+    if (point.x < middle) {
+        [self setCurrentPage:self.currentPage - 1 sendEvent:YES canDefer:YES];
+    } else {
+        [self setCurrentPage:self.currentPage + 1 sendEvent:YES canDefer:YES];
+    }
+    
 }
 
 #pragma mark - Accessors
@@ -437,6 +525,12 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	}
 	
 	_indicatorDiameter = indicatorDiameter;
+
+	// Absolute minimum height of the control is the indicator diameter
+	if (_minHeight < indicatorDiameter) {
+		self.minHeight = indicatorDiameter;
+	}
+
 	[self _updateMeasuredIndicatorSizes];
 	[self setNeedsDisplay];
 }
@@ -451,6 +545,24 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	[self setNeedsDisplay];
 }
 
+- (void)setMinHeight:(CGFloat)minHeight
+{
+	if (minHeight == _minHeight) {
+		return;
+	}
+
+   // Absolute minimum height of the control is the indicator diameter
+	if (minHeight < _indicatorDiameter) {
+		minHeight = _indicatorDiameter;
+	}
+
+	_minHeight = minHeight;
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
+	[self setNeedsLayout];
+}
+
 - (void)setNumberOfPages:(NSInteger)numberOfPages
 {
 	if (numberOfPages == _numberOfPages) {
@@ -460,6 +572,9 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	self.accessibilityPageControl.numberOfPages = numberOfPages;
 	
 	_numberOfPages = MAX(0, numberOfPages);
+	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
+		[self invalidateIntrinsicContentSize];
+	}
 	[self updateAccessibilityValue];
 	[self setNeedsDisplay];
 }
