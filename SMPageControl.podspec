@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SMPageControl"
-  s.version      = "1.1"
+  s.version      = "1.2"
   s.summary      = "UIPageControl’s fancy one-upping cousin."
   s.description  = <<-DESC
     Designers love to make beautifully custom page controls that fit in with all the wood,
@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
   s.author       = { "Jerry Jones" => "jerry@spacemanlabs.com" }
   s.source       = {
     :git => "https://github.com/Spaceman-Labs/SMPageControl.git",
-    :tag => "1.1"
+    :tag => "1.2"
   }
   s.platform     = :ios, '5.0'
   s.source_files = 'SMPageControl.{h,m}'
