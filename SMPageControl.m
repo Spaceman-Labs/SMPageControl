@@ -146,6 +146,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	CGFloat xOffset = left;
 	CGFloat yOffset = 0.0f;
 	UIColor *fillColor = nil;
+    UIColor *strokeColor = nil;
 	UIImage *image = nil;
 	CGImageRef maskingImage = nil;
 	CGSize maskSize = CGSizeZero;
@@ -155,12 +156,14 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		
 		if (i == _displayedPage) {
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
+            strokeColor = _currentPageIndicatorTintStrokeColor;
 			image = _currentPageImages[indexNumber];
 			if (nil == image) {
 				image = _currentPageIndicatorImage;
 			}
 		} else {
 			fillColor = _pageIndicatorTintColor ? _pageIndicatorTintColor : [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+            strokeColor = _pageIndicatorTintStrokeColor;
 			image = _pageImages[indexNumber];
 			if (nil == image) {
 				image = _pageIndicatorImage;
@@ -180,7 +183,8 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			}
 		}
 				
-		[fillColor set];
+		[fillColor setFill];
+        if (strokeColor) [strokeColor setStroke];
 		CGRect indicatorRect;
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
@@ -197,6 +201,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
             indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
 			CGContextFillEllipseInRect(context, indicatorRect);
+            if (strokeColor) {
+                CGContextStrokeEllipseInRect(context, indicatorRect);
+            }
 		}
 		
         [pageRects addObject:[NSValue valueWithCGRect:indicatorRect]];
@@ -404,6 +411,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH_LARGE;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN_LARGE;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.2f];
+            self.pageIndicatorTintStrokeColor = nil;
 			self.minHeight = DEFAULT_MIN_HEIGHT_LARGE;
 			break;
 		case SMPageControlDefaultStyleClassic:
@@ -411,6 +419,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			self.indicatorDiameter = DEFAULT_INDICATOR_WIDTH;
 			self.indicatorMargin = DEFAULT_INDICATOR_MARGIN;
 			self.pageIndicatorTintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
+            self.pageIndicatorTintStrokeColor = nil;
 			self.minHeight = DEFAULT_MIN_HEIGHT;
 			break;
 	}
