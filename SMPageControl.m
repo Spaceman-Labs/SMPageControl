@@ -386,7 +386,14 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (void)updatePageNumberForScrollView:(UIScrollView *)scrollView
 {
-	NSInteger page = (int)floorf(scrollView.contentOffset.x / scrollView.bounds.size.width);
+	// Use the trailing edge on reverse and leading edge on forward
+	NSInteger page;
+	if (self.currentPage * scrollView.bounds.size.width > scrollView.contentOffset.x) {
+		page = (int)ceilf(scrollView.contentOffset.x / scrollView.bounds.size.width);
+	} else {
+		page = (int)floorf(scrollView.contentOffset.x / scrollView.bounds.size.width);
+	}
+    
 	self.currentPage = page;
 }
 
