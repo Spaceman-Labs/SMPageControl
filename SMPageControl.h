@@ -54,6 +54,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlTapBehavior) {
 - (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex;
 - (void)setCurrentImage:(UIImage *)image forPage:(NSInteger)pageIndex;
 - (void)setImageMask:(UIImage *)image forPage:(NSInteger)pageIndex;
+- (void)setCurrentImageMask:(UIImage *)image forPage:(NSInteger)pageIndex;
 
 - (UIImage *)imageForPage:(NSInteger)pageIndex;
 - (UIImage *)currentImageForPage:(NSInteger)pageIndex;
