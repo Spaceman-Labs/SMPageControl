@@ -25,7 +25,7 @@ typedef NS_ENUM(NSUInteger, SMPageControlImageType) {
 	SMPageControlImageTypeNormal = 1,
 	SMPageControlImageTypeCurrent,
 	SMPageControlImageTypeMask,
-    SMPageControlImageTypeCurrentMask
+	SMPageControlImageTypeCurrentMask
 };
 
 typedef NS_ENUM(NSUInteger, SMPageControlStyleDefaults) {
@@ -162,9 +162,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
 			image = _currentPageImages[indexNumber];
 			if (nil == image) {
-                if (nil == _currentPageImageMasks[indexNumber]) {
-				    image = _currentPageIndicatorImage;
-                }
+				if (nil == _currentPageImageMasks[indexNumber]) {
+					image = _currentPageIndicatorImage;
+				}
 			}
 		} else {
 			fillColor = _pageIndicatorTintColor ? _pageIndicatorTintColor : [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
@@ -176,31 +176,30 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		
 		// If no finished images have been set, try a masking image
 		if (nil == image) {
-            if (i == _displayedPage) {
-                maskingImage = (__bridge CGImageRef)_cgCurrentImageMasks[indexNumber];
-                UIImage *originalImage = _currentPageImageMasks[indexNumber];
-                maskSize = originalImage.size;
-            }
-            else {
-                maskingImage = (__bridge CGImageRef)_cgImageMasks[indexNumber];
-                UIImage *originalImage = _pageImageMasks[indexNumber];
-                maskSize = originalImage.size;
-            }
-
-            // If no per page mask is set, try for a global page mask!
-            if (nil == maskingImage) {
-                maskingImage = _pageImageMask;
-                maskSize = _pageIndicatorMaskImage.size;
-            }
+			if (i == _displayedPage) {
+				maskingImage = (__bridge CGImageRef)_cgCurrentImageMasks[indexNumber];
+				UIImage *originalImage = _currentPageImageMasks[indexNumber];
+				maskSize = originalImage.size;
+			} else {
+				maskingImage = (__bridge CGImageRef)_cgImageMasks[indexNumber];
+				UIImage *originalImage = _pageImageMasks[indexNumber];
+				maskSize = originalImage.size;
+			}
+			
+			// If no per page mask is set, try for a global page mask!
+			if (nil == maskingImage) {
+				maskingImage = _pageImageMask;
+				maskSize = _pageIndicatorMaskImage.size;
+			}
 		}
-				
+		
 		[fillColor set];
 		CGRect indicatorRect;
 		if (image) {
 			yOffset = [self _topOffsetForHeight:image.size.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - image.size.width) / 2.0f);
 			[image drawAtPoint:CGPointMake(centeredXOffset, yOffset)];
-            indicatorRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
+			indicatorRect = CGRectMake(centeredXOffset, yOffset, image.size.width, image.size.height);
 		} else if (maskingImage) {
 			yOffset = [self _topOffsetForHeight:maskSize.height rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - maskSize.width) / 2.0f);
@@ -209,11 +208,11 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		} else {
 			yOffset = [self _topOffsetForHeight:_indicatorDiameter rect:rect];
 			CGFloat centeredXOffset = xOffset + floorf((_measuredIndicatorWidth - _indicatorDiameter) / 2.0f);
-            indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
+			indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
 			CGContextFillEllipseInRect(context, indicatorRect);
 		}
 		
-        [pageRects addObject:[NSValue valueWithCGRect:indicatorRect]];
+		[pageRects addObject:[NSValue valueWithCGRect:indicatorRect]];
 		maskingImage = NULL;
 		xOffset += _measuredIndicatorWidth + _indicatorMargin;
 	}
@@ -301,17 +300,18 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		case SMPageControlImageTypeMask:
 			dictionary = self.pageImageMasks;
 			break;
-        case SMPageControlImageTypeCurrentMask:
-            dictionary = self.currentPageImageMasks;
+		case SMPageControlImageTypeCurrentMask:
+			dictionary = self.currentPageImageMasks;
+			break;
 		default:
 			break;
 	}
-    
-    if (image) {
-        dictionary[@(pageIndex)] = image;
-    } else {
-        [dictionary removeObjectForKey:@(pageIndex)];
-    }
+	
+	if (image) {
+		dictionary[@(pageIndex)] = image;
+	} else {
+		[dictionary removeObjectForKey:@(pageIndex)];
+	}
 }
 
 - (void)setImage:(UIImage *)image forPage:(NSInteger)pageIndex
@@ -328,21 +328,21 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (void)setCurrentImageMask:(UIImage *)image forPage:(NSInteger)pageIndex
 {
-    [self _setImage:image forPage:pageIndex type:SMPageControlImageTypeCurrentMask];
-
-    if (nil == image) {
-        [self.cgCurrentImageMasks removeObjectForKey:@(pageIndex)];
-        return;
-    }
-
-    CGImageRef maskImage = [self createMaskForImage:image];
-
-    if (maskImage) {
-        self.cgCurrentImageMasks[@(pageIndex)] = (__bridge id)maskImage;
-        CGImageRelease(maskImage);
-        [self _updateMeasuredIndicatorSizeWithSize:image.size];
-        [self setNeedsDisplay];
-    }
+	[self _setImage:image forPage:pageIndex type:SMPageControlImageTypeCurrentMask];
+	
+	if (nil == image) {
+		[self.cgCurrentImageMasks removeObjectForKey:@(pageIndex)];
+		return;
+	}
+	
+	CGImageRef maskImage = [self createMaskForImage:image];
+	
+	if (maskImage) {
+		self.cgCurrentImageMasks[@(pageIndex)] = (__bridge id)maskImage;
+		CGImageRelease(maskImage);
+		[self _updateMeasuredIndicatorSizeWithSize:image.size];
+		[self setNeedsDisplay];
+	}
 }
 
 - (void)setImageMask:(UIImage *)image forPage:(NSInteger)pageIndex
@@ -381,9 +381,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		case SMPageControlImageTypeMask:
 			dictionary = _pageImageMasks;
 			break;
-        case SMPageControlImageTypeCurrentMask:
-            dictionary = _currentPageImageMasks;
-            break;
+		case SMPageControlImageTypeCurrentMask:
+			dictionary = _currentPageImageMasks;
+			break;
 		default:
 			break;
 	}
@@ -408,7 +408,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (UIImage *)currentImageMaskForPage:(NSInteger)pageIndex
 {
-    return [self _imageForPage:pageIndex type:SMPageControlImageTypeCurrentMask];
+	return [self _imageForPage:pageIndex type:SMPageControlImageTypeCurrentMask];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -473,7 +473,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	CGContextDrawImage(context, CGRectMake(0, 0, pixelsWide, pixelsHigh), image.CGImage);
 	CGImageRef maskImage = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
-
+	
 	return maskImage;
 }
 
@@ -506,7 +506,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	if (self.pageIndicatorMaskImage) {
 		[self _updateMeasuredIndicatorSizeWithSize:self.pageIndicatorMaskImage.size];
 	}
-
+	
 	if ([self respondsToSelector:@selector(invalidateIntrinsicContentSize)]) {
 		[self invalidateIntrinsicContentSize];
 	}
@@ -726,12 +726,12 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (NSMutableDictionary *)currentPageImageMasks
 {
-    if (nil != _currentPageImageMasks) {
-        return _currentPageImageMasks;
-    }
-
-    _currentPageImageMasks = [[NSMutableDictionary alloc] init];
-    return _currentPageImageMasks;
+	if (nil != _currentPageImageMasks) {
+		return _currentPageImageMasks;
+	}
+	
+	_currentPageImageMasks = [[NSMutableDictionary alloc] init];
+	return _currentPageImageMasks;
 }
 
 - (NSMutableDictionary *)cgImageMasks
@@ -746,12 +746,12 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (NSMutableDictionary *)cgCurrentImageMasks
 {
-    if (nil != _cgCurrentImageMasks) {
-        return _cgCurrentImageMasks;
-    }
-
-    _cgCurrentImageMasks = [[NSMutableDictionary alloc] init];
-    return _cgCurrentImageMasks;
+	if (nil != _cgCurrentImageMasks) {
+		return _cgCurrentImageMasks;
+	}
+	
+	_cgCurrentImageMasks = [[NSMutableDictionary alloc] init];
+	return _cgCurrentImageMasks;
 }
 
 #pragma mark - UIAccessibility
