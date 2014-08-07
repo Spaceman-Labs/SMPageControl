@@ -586,7 +586,8 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 
 - (void)setCurrentPage:(NSInteger)currentPage sendEvent:(BOOL)sendEvent canDefer:(BOOL)defer
 {	
-	_currentPage = MIN(MAX(0, currentPage), _numberOfPages - 1);
+	currentPage = MIN(MAX(0, currentPage), _numberOfPages - 1);
+	_currentPage = currentPage;
 	self.accessibilityPageControl.currentPage = self.currentPage;
 	
 	[self updateAccessibilityValue];
@@ -596,7 +597,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		[self setNeedsDisplay];
 	}
 	
-	if (sendEvent) {
+	if (sendEvent && _currentPage != currentPage) {
 		[self sendActionsForControlEvents:UIControlEventValueChanged];
 	}
 }
