@@ -78,6 +78,9 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 {
 	_numberOfPages = 0;
 	_tapBehavior = SMPageControlTapBehaviorStep;
+	
+	_currentPageIndicatorTintStrokeWidth = 1.0f;
+	_pageIndicatorTintStrokeWidth = 1.0f;
     
 	self.backgroundColor = [UIColor clearColor];
 	
@@ -147,6 +150,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 	CGFloat yOffset = 0.0f;
 	UIColor *fillColor = nil;
     UIColor *strokeColor = nil;
+	CGFloat strokeWidth = 1.0f;
 	UIImage *image = nil;
 	CGImageRef maskingImage = nil;
 	CGSize maskSize = CGSizeZero;
@@ -157,6 +161,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		if (i == _displayedPage) {
 			fillColor = _currentPageIndicatorTintColor ? _currentPageIndicatorTintColor : [UIColor whiteColor];
             strokeColor = _currentPageIndicatorTintStrokeColor;
+			strokeWidth = _currentPageIndicatorTintStrokeWidth;
 			image = _currentPageImages[indexNumber];
 			if (nil == image) {
 				image = _currentPageIndicatorImage;
@@ -164,6 +169,7 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 		} else {
 			fillColor = _pageIndicatorTintColor ? _pageIndicatorTintColor : [[UIColor whiteColor] colorWithAlphaComponent:0.3f];
             strokeColor = _pageIndicatorTintStrokeColor;
+			strokeWidth = _pageIndicatorTintStrokeWidth;
 			image = _pageImages[indexNumber];
 			if (nil == image) {
 				image = _pageIndicatorImage;
@@ -202,7 +208,8 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
             indicatorRect = CGRectMake(centeredXOffset, yOffset, _indicatorDiameter, _indicatorDiameter);
 			CGContextFillEllipseInRect(context, indicatorRect);
             if (strokeColor) {
-                CGContextStrokeEllipseInRect(context, indicatorRect);
+				CGContextSetLineWidth(context, strokeWidth);
+                CGContextStrokeEllipseInRect(context, CGRectInset(indicatorRect, strokeWidth * 0.5f, strokeWidth * 0.5f));
             }
 		}
 		
