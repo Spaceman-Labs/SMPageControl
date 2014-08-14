@@ -38,8 +38,11 @@ typedef NS_ENUM(NSUInteger, SMPageControlTapBehavior) {
 @property (nonatomic, strong) UIImage *pageIndicatorImage				UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIImage *pageIndicatorMaskImage			UI_APPEARANCE_SELECTOR; // ignored if pageIndicatorImage is set
 @property (nonatomic, strong) UIColor *pageIndicatorTintColor			UI_APPEARANCE_SELECTOR; // ignored if pageIndicatorImage is set
+@property (nonatomic, strong) UIColor *pageIndicatorTintStrokeColor			UI_APPEARANCE_SELECTOR; // ignored if pageIndicatorImage is set
+
 @property (nonatomic, strong) UIImage *currentPageIndicatorImage		UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIColor *currentPageIndicatorTintColor	UI_APPEARANCE_SELECTOR; // ignored if currentPageIndicatorImage is set
+@property (nonatomic, strong) UIColor *currentPageIndicatorTintStrokeColor	UI_APPEARANCE_SELECTOR; // ignored if currentPageIndicatorImage is set
 
 @property (nonatomic) BOOL hidesForSinglePage;			// hide the the indicator if there is only one page. default is NO
 @property (nonatomic) BOOL defersCurrentPageDisplay;	// if set, clicking to a new page won't update the currently displayed page until -updateCurrentPageDisplay is called. default is NO
