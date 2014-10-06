@@ -73,12 +73,12 @@
 
 - (void)pageControl:(id)sender
 {
-	NSLog(@"Current Page (UIPageControl) : %i", self.pageControl.currentPage);
+	NSLog(@"Current Page (UIPageControl) : %li", (long)self.pageControl.currentPage);
 }
 
 - (void)spacePageControl:(SMPageControl *)sender
 {
-	NSLog(@"Current Page (SMPageControl): %i", sender.currentPage);
+	NSLog(@"Current Page (SMPageControl): %li", (long)sender.currentPage);
 }
 
 @end
