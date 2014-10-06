@@ -378,9 +378,10 @@ static SMPageControlStyleDefaults _defaultStyleForSystemVersion;
 - (CGSize)intrinsicContentSize
 {
 	if (_numberOfPages < 1 || (_numberOfPages < 2 && _hidesForSinglePage)) {
-		return CGSizeMake(UIViewNoIntrinsicMetric, 0.0f);
+		return CGSizeZero;
 	}
-	CGSize intrinsicContentSize = CGSizeMake(UIViewNoIntrinsicMetric, MAX(_measuredIndicatorHeight, _minHeight));
+    CGFloat intrinsicContentWidth = [self sizeForNumberOfPages:self.numberOfPages].width;
+	CGSize intrinsicContentSize = CGSizeMake(intrinsicContentWidth, MAX(_measuredIndicatorHeight, _minHeight));
 	return intrinsicContentSize;
 }
 
