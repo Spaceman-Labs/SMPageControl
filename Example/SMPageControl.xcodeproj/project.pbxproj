@@ -18,7 +18,6 @@
 		3D8496D2162A4849001ECE62 /* currentSearchDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D8496D0162A4849001ECE62 /* currentSearchDot@2x.png */; };
 		3D8496D3162A4849001ECE62 /* searchDot@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D8496D1162A4849001ECE62 /* searchDot@2x.png */; };
 		3D8496D7162A4911001ECE62 /* retro_intro@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D8496D6162A4911001ECE62 /* retro_intro@2x.png */; };
-		3D8496DE162A73A5001ECE62 /* SMPageControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8496DD162A73A5001ECE62 /* SMPageControl.m */; };
 		3D9CDA921629EA9100B95512 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA911629EA9100B95512 /* UIKit.framework */; };
 		3D9CDA941629EA9100B95512 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA931629EA9100B95512 /* Foundation.framework */; };
 		3D9CDA961629EA9100B95512 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D9CDA951629EA9100B95512 /* CoreGraphics.framework */; };
@@ -31,6 +30,7 @@
 		3D9CDAAB1629EA9100B95512 /* SMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D9CDAAA1629EA9100B95512 /* SMViewController.m */; };
 		3D9CDAAE1629EA9100B95512 /* SMViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3D9CDAAC1629EA9100B95512 /* SMViewController_iPhone.xib */; };
 		3D9CDAB11629EA9100B95512 /* SMViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3D9CDAAF1629EA9100B95512 /* SMViewController_iPad.xib */; };
+		4E84A19222D20A8F00008376 /* SMPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E84A19122D20A8F00008376 /* SMPageControl.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,8 +45,6 @@
 		3D8496D0162A4849001ECE62 /* currentSearchDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "currentSearchDot@2x.png"; sourceTree = "<group>"; };
 		3D8496D1162A4849001ECE62 /* searchDot@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchDot@2x.png"; sourceTree = "<group>"; };
 		3D8496D6162A4911001ECE62 /* retro_intro@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "retro_intro@2x.png"; sourceTree = "<group>"; };
-		3D8496DC162A73A5001ECE62 /* SMPageControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMPageControl.h; path = ../../SMPageControl.h; sourceTree = "<group>"; };
-		3D8496DD162A73A5001ECE62 /* SMPageControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMPageControl.m; path = ../../SMPageControl.m; sourceTree = "<group>"; };
 		3D9CDA8D1629EA9100B95512 /* SMPageControl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMPageControl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D9CDA911629EA9100B95512 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3D9CDA931629EA9100B95512 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -64,6 +62,8 @@
 		3D9CDAAA1629EA9100B95512 /* SMViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMViewController.m; sourceTree = "<group>"; };
 		3D9CDAAD1629EA9100B95512 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SMViewController_iPhone.xib; sourceTree = "<group>"; };
 		3D9CDAB01629EA9100B95512 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SMViewController_iPad.xib; sourceTree = "<group>"; };
+		4E84A19022D20A8F00008376 /* SMPageControl-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMPageControl-Bridging-Header.h"; sourceTree = "<group>"; };
+		4E84A19122D20A8F00008376 /* SMPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SMPageControl.swift; path = ../SMPageControl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,8 +84,10 @@
 			isa = PBXGroup;
 			children = (
 				3D9CDA971629EA9100B95512 /* SMPageControl */,
+				4E84A19122D20A8F00008376 /* SMPageControl.swift */,
 				3D9CDA901629EA9100B95512 /* Frameworks */,
 				3D9CDA8E1629EA9100B95512 /* Products */,
+				4E84A19022D20A8F00008376 /* SMPageControl-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -117,8 +119,6 @@
 				3D9CDAAC1629EA9100B95512 /* SMViewController_iPhone.xib */,
 				3D9CDAAF1629EA9100B95512 /* SMViewController_iPad.xib */,
 				3D9CDA981629EA9100B95512 /* Supporting Files */,
-				3D8496DC162A73A5001ECE62 /* SMPageControl.h */,
-				3D8496DD162A73A5001ECE62 /* SMPageControl.m */,
 			);
 			path = SMPageControl;
 			sourceTree = "<group>";
@@ -177,12 +177,18 @@
 				CLASSPREFIX = SM;
 				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Spaceman Labs";
+				TargetAttributes = {
+					3D9CDA8C1629EA9100B95512 = {
+						LastSwiftMigration = 1020;
+					};
+				};
 			};
 			buildConfigurationList = 3D9CDA871629EA9100B95512 /* Build configuration list for PBXProject "SMPageControl" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 3D9CDA821629EA9100B95512;
@@ -227,10 +233,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E84A19222D20A8F00008376 /* SMPageControl.swift in Sources */,
 				3D9CDA9E1629EA9100B95512 /* main.m in Sources */,
 				3D9CDAA21629EA9100B95512 /* SMAppDelegate.m in Sources */,
 				3D9CDAAB1629EA9100B95512 /* SMViewController.m in Sources */,
-				3D8496DE162A73A5001ECE62 /* SMPageControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,10 +325,16 @@
 		3D9CDAB51629EA9100B95512 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SMPageControl/SMPageControl-Prefix.pch";
 				INFOPLIST_FILE = "SMPageControl/SMPageControl-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SMPageControl-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -330,10 +342,15 @@
 		3D9CDAB61629EA9100B95512 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SMPageControl/SMPageControl-Prefix.pch";
 				INFOPLIST_FILE = "SMPageControl/SMPageControl-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SMPageControl-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
