@@ -7,8 +7,18 @@
 //
 
 #import "SMViewController.h"
+#import "SMPageControl-Swift.h"
 
 @interface SMViewController ()
+
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl1;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl2;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl3;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl4;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl5;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl6;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl7;
+@property (nonatomic, weak) IBOutlet SMPageControl *spacePageControl8;
 
 @end
 
@@ -34,8 +44,8 @@
 	self.spacePageControl2.indicatorMargin = 20.0f;
 	self.spacePageControl2.indicatorDiameter = 10.0f;
 	
-	self.spacePageControl3.alignment = SMPageControlAlignmentLeft;
-	self.spacePageControl4.alignment = SMPageControlAlignmentRight;
+    self.spacePageControl3.alignment = SMPageControlHorizontalAlignmentLeft;
+    self.spacePageControl4.alignment = SMPageControlHorizontalAlignmentRight;
 	
 	[self.spacePageControl5 setPageIndicatorImage:[UIImage imageNamed:@"pageDot"]];
 	[self.spacePageControl5 setCurrentPageIndicatorImage:[UIImage imageNamed:@"currentPageDot"]];
@@ -73,12 +83,12 @@
 
 - (void)pageControl:(id)sender
 {
-	NSLog(@"Current Page (UIPageControl) : %i", self.pageControl.currentPage);
+    NSLog(@"Current Page (UIPageControl) : %li", (long)self.pageControl.currentPage);
 }
 
 - (void)spacePageControl:(SMPageControl *)sender
 {
-	NSLog(@"Current Page (SMPageControl): %i", sender.currentPage);
+    NSLog(@"Current Page (SMPageControl): %li", (long)sender.currentPage);
 }
 
 @end
